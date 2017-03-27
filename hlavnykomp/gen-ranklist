@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+cd hlavnykomp/web
+python ./generate_rank.py

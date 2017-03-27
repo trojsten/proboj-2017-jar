@@ -1,0 +1,14 @@
+klienti=( bubokrki paulinia m jedejedemasinka okno MAGA nahodicka nulano veduci )
+mapy=( mapy/*.ppm )
+nazvy=(
+  'veduci'
+  'BUBOKRKI'
+  'nulano'
+  'nahodicka'
+  'MAGA'
+  'Windows Vista'
+  'Jedejedemasinka'
+  'Makroωlnky'
+  'paulinia'
+)
+

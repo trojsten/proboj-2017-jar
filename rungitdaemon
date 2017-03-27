@@ -1,0 +1,3 @@
+#!/bin/bash
+cd ~/Proboj
+git daemon --export-all --reuseaddr --base-path=$PWD $PWD

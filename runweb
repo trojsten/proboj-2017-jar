@@ -1,0 +1,3 @@
+#!/bin/bash
+cd hlavnykomp/web
+FLASK_PUBLIC=1 python web.py
