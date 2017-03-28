@@ -1,4 +1,4 @@
-# proboj-2016-jesen
+# proboj-2017-jar - Mad Scientists
 
 ## Co treba na rozbehanie proboja?
 
@@ -20,7 +20,7 @@ O tom, ako rozbehat server a observer je napisane v subore
 Dalej popiseme, ako rozbehat webserver (potrebny na submitovanie).
 
 Spustit webserver si viete pomocou bash-scriptu `./runweb` ktory
-spustite z korena proboja. (Teda v `./proboj-2016-jesen/` spustite
+spustite z korena proboja. (Teda v `./proboj-2017-jar/` spustite
 `./runweb`.)
 
 Ked vam uz bezi web, tak ho viete navstivit na `0.0.0.0:5000`
@@ -46,7 +46,7 @@ chybove hlasky pri kompilovani.
 Tak to treba opravit. Konkretne pokyny bohuzial neexistuju,
 takze si asi trochu poplacete, ale co vas nezabije, to vas posilni.
 
-## O vyhodnoteni
+<!--## O vyhodnoteni
 
 Najprv bol "group stage", kde boli 2 skupiny. Na kazdej mape sa odohral
 1 zapas, v ktorom boli vsetky timy skupiny. Z kazdej skupiny postupili
@@ -72,4 +72,4 @@ Konkretnejsie pokyny zatial neexistuju.
 
 ![](proboj3b.png)
 
-![](proboj3c.png)
+![](proboj3c.png)-->

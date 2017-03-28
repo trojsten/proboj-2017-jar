@@ -5,20 +5,25 @@
 #include <map>
 
 #include "marshal.h"
-#include "mapa.h"
 
 using namespace std;
 
 const int MAX_ROUNDS = 1000;
-const int TURBO_DURATION = 8;
-const int BONUS_PROBABILITY = 50;
 
 enum direction {
     LEFT, RIGHT, UP, DOWN
 };
 
-struct player_command {
+enum comand {
+    MOVE, BUILD
+};
+
+struct instruction {
+    int player;
+    comand cmd;
+    int id;
     direction dir;
+    int strenght;
 };
 
 struct point {
@@ -30,13 +35,13 @@ struct point {
 };
 
 enum square_type {
-    EMPTY, WALL, SPAWN, BONUS_SPAWN, FAST_BONUS, STONE_BONUS
+    GRASS, STONE, WATER, LAB, LAB_SPAWN, TOWN
 };
 
 struct block {
     square_type type;
     int owned_by;
-    int crossed_by;
+    int strenght;
 };
 
 struct player {
@@ -45,14 +50,11 @@ struct player {
     bool alive;
 
     int score;
-
-    //TODO: bonuses
-    
     int turbo;
 };
 
 // UCASTNICI: tento struct je pre vas nedolezity
-struct game_map {
+struct mapa {
     int width, height;
     vector<vector<square_type>> squares;
     
@@ -75,17 +77,19 @@ struct game_state {
     game_state(int num_players, game_map gm);
 
     int block_index(point pos) {
-    return pos.x * height + pos.y;
+        return pos.x * height + pos.y;
     }
 
     block get_block(point pos) {
-    return blocks[block_index(pos)];
+        return blocks[block_index(pos)];
     }
 
     block get_block(int x, int y) {
-    return get_block({x, y});
+        return get_block({x, y});
     }
 };
+
+
 
 #endif
 
