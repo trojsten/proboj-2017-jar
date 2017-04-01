@@ -17,16 +17,17 @@ using namespace std;
 #include "mapa.h"
 #include "marshal.h"
 
-const auto MAX_CITAJ = 1024;
-const auto ROUND_TIME = 40;
+const int MAX_CITAJ = 1024;
+const int ROUND_TIME = 40;
 
 vector<Klient> klienti;
 
-/* Komment z minuleho proboja. Mozno to chceme lepsie.
- * // tato trapna funkcia existuje len kvoli inicializujSignaly()
- * // btw, takto sa signal handling nerobi
- * // len sa s tym nechceme babrat.
- */
+// Komentar z minuleho proboja. Mozno je nam to jedno.
+// /* Komment z minuleho proboja. Mozno to chceme lepsie.
+//  * // tato trapna funkcia existuje len kvoli inicializujSignaly()
+//  * // btw, takto sa signal handling nerobi
+//  * // len sa s tym nechceme babrat.
+//  */
 void zabiKlientov() {
     fprintf(stderr, "ukoncujem klientov\n");
     for (unsigned i=0; i<klienti.size(); i++) {
@@ -100,18 +101,19 @@ int main(int argc, char *argv[]) {
     for (int i = 3; i < argc; i++) {
         string klientAdr(argv[i]);
         string meno = last_valid_substr(klientAdr);
-        
         // meno klienta je cast za poslednym /, za ktorym nieco je
+        
+        //ak sa nejaky klient opakuje, odlis ich
         bool dajNahodnuFarbu = false;
         while (uzMena.count(meno)) {
             dajNahodnuFarbu = true;
             meno += "+";
         }
         uzMena.insert(meno);
-        // posleme klientovi, kolkaty v poradi je
-        string uvodneData = "hrac " + to_string(i - 3) + "\n";
-        
-        klienti.push_back(Klient(meno, uvodneData, klientAdr, zaznAdr));
+//         // posleme klientovi, kolkaty v poradi je
+//         string uvodneData = "hrac " + to_string(i - 3) + "\n";
+//         
+        klienti.push_back(Klient(meno, "", klientAdr, zaznAdr));
         
         string farba;
         if (dajNahodnuFarbu) {
@@ -120,7 +122,7 @@ int main(int argc, char *argv[]) {
                 farba += to_string(cl) + " ";
             }
             farba += "1.0";
-        } 
+        }
         else {
             string clsubor = klientAdr + "/color";
             fstream clstream(clsubor.c_str(), fstream::in);
@@ -132,7 +134,7 @@ int main(int argc, char *argv[]) {
     }
     
     // nacitame mapu
-    game_map gm;
+    mapa gm;
     if (!gm.load(argv[2])) {
         exit(1);
     }
@@ -145,6 +147,7 @@ int main(int argc, char *argv[]) {
         klienti[k].restartuj();
     }
     
+    //TODO maskovat mapu
     stringstream state_str;
     uloz(state_str, gs);
     state_str << endl;
@@ -157,20 +160,18 @@ int main(int argc, char *argv[]) {
     long long lasttime = gettime();
     
     int last_rounds = -1;
-    while (last_rounds != 0 && gs.round < MAX_ROUNDS) {
+    while (last_rounds != 0 && gs.round < MAX_POCET_KOL) {
         cerr << "tah " << gs.round << "\n";
-        vector<vector<player_command> > commands(klienti.size());
+        vector<instruction> commands;
         
         while (gettime() - lasttime < ROUND_TIME) {
             // fetchujeme spravy klientov, ale este nesimulujeme kolo
             for (unsigned k = 0; k < klienti.size(); k++) {
-                if (!gs.players[k].alive) {
-                    continue;
-                }
                 if (!klienti[k].zije()) {
                     klienti[k].restartuj();
                     // klientovi posleme relevantne data
                     if (klienti[k].zije()) {
+                        //TODO tiez maskovat
                         stringstream old_state_str;
                         uloz(old_state_str, gs);
                         klienti[k].posli(old_state_str.str());
@@ -184,47 +185,73 @@ int main(int argc, char *argv[]) {
                     string cmd;
                     riadky >> cmd;
                     if (riadky.eof()) break;
-                    
-                    if (cmd == "cd") {
+                    instruction prikaz;
+                    prikaz.klient_id = k;
+                    if (cmd == "POSUN") {
+                        prikaz.pr=POSUN;
+                        int robot;
+                        riadky >> robot;
+                        if (riadky.eof()) {
+                            cerr << "Nesprávny príkaz " << k << ": žiadne id robota za prikazom POSUN" << endl;
+                            continue;
+                        }
+                        prikaz.id_robota = robot;
                         string dir;
                         riadky >> dir;
                         if (riadky.eof()) {
-                            cerr << "wrong input " << k << ": no dir after cd" << endl;
+                            cerr << "Nesprávny príkaz " << k << ": žiadny smer za príkazom POSUN" << endl;
                             continue;
                         }
                         
-                        cout << "hrac " << k << "'" << dir << "'" << endl;
-                        if (dir == "LEFT") {
-                            commands[k].push_back(player_command{LEFT});
-                        } 
-                        else if (dir == "RIGHT") {
-                            commands[k].push_back(player_command{RIGHT});
-                        } 
-                        else if (dir == "UP") {
-                            commands[k].push_back(player_command{UP});
-                        } 
-                        else if (dir == "DOWN") {
-                            commands[k].push_back(player_command{DOWN});
-                        } 
+                        //cout << "hrac " << k << "'" << dir << "'" << endl;
+                        //VLAVO, VPRAVO, HORE, DOLE
+                        if (dir == "VLAVO")
+                            prikaz.sm = VLAVO;
+                        else if (dir == "VPRAVO")
+                            prikaz.sm = VPRAVO;
+                        else if (dir == "HORE")
+                            prikaz.sm = HORE;
+                        else if (dir == "DOLE")
+                            prikaz.sm = DOLE;
                         else {
-                            cerr << "wrong input " << k << ": invalid dir '" << dir << "'" << endl;
+                            cerr << "Nesprávny príkaz " << k << ": nesprávny smer '" << dir << "'" << endl;
                         }
                     } 
-                    else {
-                        cerr << "wrong input " << k << ": no such cmd '" << cmd << "'" << endl;
+                    else if (cmd == "POSTAV") {
+                        prikaz.pr=POSTAV;
+                        int lab;
+                        riadky >> lab;
+                        if (riadky.eof()) {
+                            cerr << "Nesprávny príkaz " << k << ": žiadne id labu za prikazom POSTAV" << endl;
+                            continue;
+                        }
+                        prikaz.lab_id = lab;
+                        int sila;
+                        riadky >> sila;
+                        if (riadky.eof()) {
+                            cerr << "Nesprávny príkaz " << k << ": žiadna sila za príkazom POSTAV" << endl;
+                            continue;
+                        }
+                        prikaz.sila = sila;
+                        
+                        //cout << "hrac " << k << "'" << dir << "'" << endl;
                     }
+                    else {
+                        cerr << "Nesprávny vstup " << k << ": nesprávny príkaz '" << cmd << "'" << endl;
+                    }
+                    commands.push_back(prikaz);
                 }
             }
         }
         gs = update_game_state(gs, commands);
         
-        // zabijeme mrtvych hracov
-        for (unsigned k = 0; k < klienti.size(); k++) {
-            if (!gs.players[k].alive) {
-                klienti[k].zabi();
-            }
-        }
-        
+        // TODO zabijeme mrtvych hracov
+//         for (unsigned k = 0; k < klienti.size(); k++) {
+//             if (!gs.players[k].alive) {
+//                 klienti[k].zabi();
+//             }
+//         }
+        //TODO maskovat
         stringstream state_str;
         uloz(state_str, gs);
         state_str << endl;
@@ -233,35 +260,33 @@ int main(int argc, char *argv[]) {
             if (!klienti[k].zije()) {
                 continue;
             }
-            if (commands[k].size() > 0) {
-                klienti[k].posli(state_str.str());
-            }
+            klienti[k].posli(state_str.str());
         }
         
         lasttime = gettime();
         
         observationstream << state_str.str();
-        
-        if (last_rounds < 0) {
-            int remain_alive = 0;
-            for (unsigned i = 0; i < gs.players.size(); i++) {
-                if (gs.players[i].alive) remain_alive++;
-            }
-            
-            if (remain_alive <= 1) {
-                last_rounds = 8;
-                
-                for (unsigned i = 0; i < gs.players.size(); i++) {
-                    if (gs.players[i].alive) {
-                        gs.players[i].score += 47;
-                    }
-                }
-            }
-        } 
-        else {
-            last_rounds -= 1;
-            if (last_rounds <= 0) break;
-        }
+        //TODO ukoncit hru ak zije iba jeden
+//         if (last_rounds < 0) {
+//             int remain_alive = 0;
+//             for (unsigned i = 0; i < gs.players.size(); i++) {
+//                 if (gs.players[i].alive) remain_alive++;
+//             }
+//             
+//             if (remain_alive <= 1) {
+//                 last_rounds = 8;
+//                 
+//                 for (unsigned i = 0; i < gs.players.size(); i++) {
+//                     if (gs.players[i].alive) {
+//                         gs.players[i].score += 47;
+//                     }
+//                 }
+//             }
+//         } 
+//         else {
+//             last_rounds -= 1;
+//             if (last_rounds <= 0) break;
+//         }
     }
     
     // cleanup
@@ -270,9 +295,9 @@ int main(int argc, char *argv[]) {
     
     ofstream rankstream((zaznAdr+"/rank").c_str());
     checkOstream(rankstream, zaznAdr+"/rank");
-    for (unsigned i = 0; i < gs.players.size(); i++) {
-        rankstream << /*klienti[i].meno <<*/ gs.players[i].score << "\n";
-    }
+//     for (unsigned i = 0; i < gs.players.size(); i++) {
+//         rankstream << /*klienti[i].meno <<*/ gs.players[i].score << "\n";
+//     }
     rankstream.close();
     
     // +- info o dlzke hry

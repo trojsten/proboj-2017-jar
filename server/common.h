@@ -8,61 +8,95 @@
 
 using namespace std;
 
-const int MAX_ROUNDS = 1000;
+const int MAX_POCET_KOL = 1000;
 
-enum direction {
-    LEFT, RIGHT, UP, DOWN
+enum smer {
+    VLAVO, VPRAVO, HORE, DOLE
 };
 
-enum comand {
-    MOVE, BUILD
+enum prikaz {
+    POSUN, POSTAV
+};
+
+enum typ_stvorca {
+    TRAVA, KAMEN, VODA, LAB, LAB_SPAWN, MESTO
+};
+
+struct postav_robota {
+    prikaz pr = POSTAV;
+    int lab_id;
+    int sila;
+};
+
+struct pohni_robota {
+    prikaz pr = POSUN;
+    int id_robota;
+    smer sm;
 };
 
 struct instruction {
-    int player;
-    comand cmd;
-    int id;
-    direction dir;
-    int strenght;
-};
-
-struct point {
-    int x, y;
+    int klient_id;
+    prikaz pr;
+    union{
+        struct{
+            int lab_id;
+            int sila;
+        };
+        struct{
+            int id_robota; 
+            smer sm;
+        };
+    };
     
-    bool operator== (const point A) const {
-        return x == A.x && y == A.y;
+    bool operator<(const instruction A) const {
+        return  (klient_id < A.klient_id) ? 
+                    (1)
+                : 
+                    (
+                        (klient_id == A.klient_id) ? 
+                            (
+                                (pr<A.pr) ? 
+                                    (1) 
+                                : 
+                                    (
+                                        (pr == A.pr) ? 
+                                            (
+                                                (pr == POSUN) ? 
+                                                    (id_robota<A.id_robota)
+                                                :
+                                                    (lab_id<A.lab_id)
+                                            ):(0)
+                                    )
+                            ):(0)
+                    );
     }
 };
+    
+// struct bod {
+//     int x, y;
+//     
+//     bool operator== (const bod A) const {
+//         return x == A.x && y == A.y;
+//     }
+// };
 
-enum square_type {
-    GRASS, STONE, WATER, LAB, LAB_SPAWN, TOWN
+struct stvorec {
+    typ_stvorca typ;
+    int majitel;
+    int sila_robota;
 };
 
-struct block {
-    square_type type;
-    int owned_by;
-    int strenght;
-};
-
-struct player {
-    point position;
-    direction dir;
-    bool alive;
-
-    int score;
-    int turbo;
-};
 
 // UCASTNICI: tento struct je pre vas nedolezity
 struct mapa {
-    int width, height;
-    vector<vector<square_type>> squares;
+    int width, height, maxplayers;
+    vector<vector<typ_stvorca>> squares;
     
-    game_map(){}
+    mapa(){}
 
-    game_map(int width, int height);
+    mapa(int width, int height);
     
-    bool load (string filename) ;
+    bool load (string filename);
 };
 
 struct game_state {
@@ -70,23 +104,10 @@ struct game_state {
 
     int width, height;
 
-    vector<player> players;
-    vector<block> blocks;
+    vector<vector<stvorec> > map;
 
     game_state() {}
-    game_state(int num_players, game_map gm);
-
-    int block_index(point pos) {
-        return pos.x * height + pos.y;
-    }
-
-    block get_block(point pos) {
-        return blocks[block_index(pos)];
-    }
-
-    block get_block(int x, int y) {
-        return get_block({x, y});
-    }
+    game_state(int num_players, mapa gm);
 };
 
 
@@ -95,32 +116,37 @@ struct game_state {
 
 
 #ifdef reflection
-// tieto udaje pouziva marshal.cpp aby vedel ako tie struktury ukladat a nacitavat
+// tieto udaje pouziva marshal.cpp aby vedel ako tie struktury ukladat a nacitavat (je to magicke makro)
 
-reflection(point)
-    member(x)
-    member(y)
+// reflection(bod)
+//     member(x)
+//     member(y)
+// end()
+
+
+reflection(postav_robota)
+    member(pr)
+    member(lab_id)
+    member(sila)
 end()
 
-reflection(block)
-    member(type)
-    member(owned_by)
-    member(crossed_by)
+reflection(pohni_robota)
+    member(pr)
+    member(id_robota)
+    member(sm)
 end()
 
-reflection(player)
-    member(position)
-    member(dir)
-    member(alive)
-    member(score)
+reflection(stvorec)
+    member(typ)
+    member(majitel)
+    member(sila_robota)
 end()
 
 reflection(game_state)
     member(round)
     member(width)
     member(height)
-    member(players)
-    member(blocks)
+    member(map)
 end()
 
 #endif

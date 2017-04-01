@@ -3,11 +3,11 @@
 
 #include <fstream>
 #include <vector>
-#include "common.h"
+#include "common.cpp"
 
-using namespace std;
+//using namespace std;
 
-bool nacitajMapu(Mapa& mapa, string filename);
+bool nacitajMapu(mapa& mapa, string filename);
 
 
 #endif

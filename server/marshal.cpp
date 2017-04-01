@@ -19,22 +19,6 @@ template<> void nacitaj<bool>(istream& buf, bool& out) {
     buf >> out;
 }
 
-template<> void uloz<direction>(std::ostream& out, const direction& in) {
-    uloz(out, (const int &)in);
-}
-
-template<> void nacitaj<direction>(std::istream& in, direction& out) {
-    nacitaj(in, (int &)out);
-}
-
-template<> void uloz<square_type>(std::ostream& out, const square_type& in) {
-    uloz(out, (const int &)in);
-}
-
-template<> void nacitaj<square_type>(std::istream& in, square_type& out) {
-    nacitaj(in, (int &)out);
-}
-
 // uloz() pre (niektore) struktury z common.h
 #define reflection(T) template<> void uloz<T> (ostream& out, const T& in) {
 #define member(x) uloz(out, in.x);

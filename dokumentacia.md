@@ -4,9 +4,6 @@
 
 Proboj je počítačová hra, ktorej hráčmi nie ste vy, ale programy, čo napíšete.
 
-Tento krát to bude splix.io. (Človekom hrateľnú verziu nájdete na
-rovnakej adrese, teda splix.io)
-
 
 Zdrojáky
 --------

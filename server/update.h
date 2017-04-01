@@ -4,6 +4,6 @@
 #include "common.h"
 #include "mapa.h"
 
-game_state update_game_state(game_state gs, vector<vector<player_command>> commands);
+game_state update_game_state(game_state gs, vector<instruction> commands);
 
 #endif
