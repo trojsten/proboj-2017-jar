@@ -114,6 +114,14 @@ struct game_state {
 
 #endif
 
+#ifdef reflectenum
+
+reflectenum(smer)
+reflectenum(prikaz)
+reflectenum(typ_stvorca)
+
+#endif
+
 
 #ifdef reflection
 // tieto udaje pouziva marshal.cpp aby vedel ako tie struktury ukladat a nacitavat (je to magicke makro)

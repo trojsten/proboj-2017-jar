@@ -19,6 +19,16 @@ template<> void nacitaj<bool>(istream& buf, bool& out) {
     buf >> out;
 }
 
+// uloz() pre (niektore) enumy z common.h
+#define reflectenum(T) template<> void uloz<T> (ostream& out, const T& in) { uloz(out,  (const int &)in);}
+#include "common.h"
+#undef reflectenum
+
+// nacitaj() pre (niektore) enumy z common.h
+#define reflectenum(T) template<> void nacitaj<T> (istream& in, T& out) { nacitaj(in, (int &)out); }
+#include "common.h"
+#undef reflectenum
+
 // uloz() pre (niektore) struktury z common.h
 #define reflection(T) template<> void uloz<T> (ostream& out, const T& in) {
 #define member(x) uloz(out, in.x);
