@@ -18,6 +18,7 @@ template<class T> void uloz(std::ostream& out, const std::vector<T>& in) {
     for (int i = 0; i < size; i++) {
         uloz(out, in[i]);
     }
+    out<<std::endl;
 }
 
 template<class T> void nacitaj(std::istream& in, std::vector<T>& out) {

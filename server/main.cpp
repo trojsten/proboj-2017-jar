@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
     // nacitame mapu
     mapa gm;
     if (!gm.load(argv[2])) {
+        fprintf(stderr, "main: nenacital som mapu\n");
         exit(1);
     }
     observationstream << gm.width << " " << gm.height << endl;
@@ -147,12 +148,13 @@ int main(int argc, char *argv[]) {
         klienti[k].restartuj();
     }
     
-    //TODO maskovat mapu
-    stringstream state_str;
-    uloz(state_str, gs);
-    state_str << endl;
     for (unsigned k = 0; k < klienti.size(); k++) {
-        klienti[k].posli(state_str.str());
+        stringstream masked_state_str;
+        masked_game_state mgs(gs,k);
+        uloz(masked_state_str, mgs);
+        masked_state_str << endl;
+        klienti[k].posli(masked_state_str.str());
+
     }
     
     usleep(1000 * 1000ll);
@@ -182,21 +184,23 @@ int main(int argc, char *argv[]) {
                 stringstream riadky(klienti[k].citaj(MAX_CITAJ));
                 
                 while (true) {
-                    string cmd;
+                    int cmd;
                     riadky >> cmd;
+                    fprintf(stderr, "main: nacital som prikaz: %d\n", cmd);
                     if (riadky.eof()) break;
                     instruction prikaz;
                     prikaz.klient_id = k;
-                    if (cmd == "POSUN") {
+                    if (cmd == POSUN) {
                         prikaz.pr=POSUN;
-                        int robot;
-                        riadky >> robot;
+                        int r, s;
+                        riadky >> r>>s;
                         if (riadky.eof()) {
                             cerr << "Nesprávny príkaz " << k << ": žiadne id robota za prikazom POSUN" << endl;
                             continue;
                         }
-                        prikaz.id_robota = robot;
-                        string dir;
+                        prikaz.riadok = r;
+                        prikaz.stlpec = s;
+                        int dir;
                         riadky >> dir;
                         if (riadky.eof()) {
                             cerr << "Nesprávny príkaz " << k << ": žiadny smer za príkazom POSUN" << endl;
@@ -205,27 +209,28 @@ int main(int argc, char *argv[]) {
                         
                         //cout << "hrac " << k << "'" << dir << "'" << endl;
                         //VLAVO, VPRAVO, HORE, DOLE
-                        if (dir == "VLAVO")
+                        if (dir == VLAVO)
                             prikaz.sm = VLAVO;
-                        else if (dir == "VPRAVO")
+                        else if (dir == VPRAVO)
                             prikaz.sm = VPRAVO;
-                        else if (dir == "HORE")
+                        else if (dir == HORE)
                             prikaz.sm = HORE;
-                        else if (dir == "DOLE")
+                        else if (dir == DOLE)
                             prikaz.sm = DOLE;
                         else {
                             cerr << "Nesprávny príkaz " << k << ": nesprávny smer '" << dir << "'" << endl;
                         }
                     } 
-                    else if (cmd == "POSTAV") {
+                    else if (cmd == POSTAV) {
                         prikaz.pr=POSTAV;
-                        int lab;
-                        riadky >> lab;
+                        int r, s;
+                        riadky >> r>>s;
                         if (riadky.eof()) {
                             cerr << "Nesprávny príkaz " << k << ": žiadne id labu za prikazom POSTAV" << endl;
                             continue;
                         }
-                        prikaz.lab_id = lab;
+                         prikaz.riadok = r;
+                        prikaz.stlpec = s;
                         int sila;
                         riadky >> sila;
                         if (riadky.eof()) {
@@ -251,21 +256,25 @@ int main(int argc, char *argv[]) {
 //                 klienti[k].zabi();
 //             }
 //         }
-        //TODO maskovat
-        stringstream state_str;
-        uloz(state_str, gs);
-        state_str << endl;
+
+        stringstream observer_state_str;
+        uloz(observer_state_str, gs);
+        observer_state_str << endl;
         
         for (unsigned k = 0; k < klienti.size(); k++) {
             if (!klienti[k].zije()) {
                 continue;
             }
-            klienti[k].posli(state_str.str());
+            stringstream masked_state_str;
+            masked_game_state mgs(gs,k);
+            uloz(masked_state_str, mgs);
+            masked_state_str << endl;
+            klienti[k].posli(masked_state_str.str());
         }
         
         lasttime = gettime();
         
-        observationstream << state_str.str();
+        observationstream << observer_state_str.str();
         //TODO ukoncit hru ak zije iba jeden
 //         if (last_rounds < 0) {
 //             int remain_alive = 0;

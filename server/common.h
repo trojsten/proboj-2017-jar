@@ -11,7 +11,7 @@ using namespace std;
 const int MAX_POCET_KOL = 1000;
 
 enum smer {
-    VLAVO, VPRAVO, HORE, DOLE
+    VLAVO, VPRAVO, HORE, DOLE, TU
 };
 
 enum prikaz {
@@ -19,33 +19,31 @@ enum prikaz {
 };
 
 enum typ_stvorca {
-    TRAVA, KAMEN, VODA, LAB, LAB_SPAWN, MESTO
+    TRAVA, KAMEN, VODA, LAB, MESTO, LAB_SPAWN
 };
 
 struct postav_robota {
     prikaz pr = POSTAV;
-    int lab_id;
+    int riadok;
+    int stlpec;
     int sila;
 };
 
 struct pohni_robota {
     prikaz pr = POSUN;
-    int id_robota;
+    int riadok;
+    int stlpec;
     smer sm;
 };
 
 struct instruction {
     int klient_id;
     prikaz pr;
+    int riadok;
+    int stlpec;
     union{
-        struct{
-            int lab_id;
-            int sila;
-        };
-        struct{
-            int id_robota; 
-            smer sm;
-        };
+        int sila;
+        smer sm;
     };
     
     bool operator<(const instruction A) const {
@@ -61,10 +59,14 @@ struct instruction {
                                     (
                                         (pr == A.pr) ? 
                                             (
-                                                (pr == POSUN) ? 
-                                                    (id_robota<A.id_robota)
-                                                :
-                                                    (lab_id<A.lab_id)
+                                                (riadok<A.riadok) ?
+                                                        (1)
+                                                    :
+                                                        (
+                                                            (riadok==A.riadok) ?
+                                                                (stlpec<A.stlpec)
+                                                            :(0)
+                                                        )
                                             ):(0)
                                     )
                             ):(0)
@@ -101,13 +103,21 @@ struct mapa {
 
 struct game_state {
     int round;
-
     int width, height;
-
+    vector<int> zelezo;
     vector<vector<stvorec> > map;
 
     game_state() {}
     game_state(int num_players, mapa gm);
+};
+
+struct masked_game_state {
+    int round;
+    int width, height;
+    int zelezo;
+    vector<vector<stvorec> > map;
+    masked_game_state(){}
+    masked_game_state(game_state gs, int klient);
 };
 
 
@@ -134,13 +144,15 @@ reflectenum(typ_stvorca)
 
 reflection(postav_robota)
     member(pr)
-    member(lab_id)
+    member(riadok)
+    member(stlpec)
     member(sila)
 end()
 
 reflection(pohni_robota)
     member(pr)
-    member(id_robota)
+    member(riadok)
+    member(stlpec)
     member(sm)
 end()
 
@@ -154,7 +166,15 @@ reflection(game_state)
     member(round)
     member(width)
     member(height)
+    member(zelezo)
     member(map)
 end()
 
+reflection(masked_game_state)
+    member(round)
+    member(width)
+    member(height)
+    member(zelezo)
+    member(map)
+end()
 #endif

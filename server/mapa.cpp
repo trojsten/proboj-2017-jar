@@ -9,8 +9,40 @@ using namespace std;
 
 #define chyba(...) (fprintf(stderr, __VA_ARGS__), false)
 
+masked_game_state::masked_game_state(game_state gs, int klient) {
+    zelezo = gs.zelezo[klient];
+    round = gs.round;
+    width = gs.width;
+    height = gs.height;
+    map.resize(height);
+    cerr<<"zamaskoval "<<height<<endl;
+
+    for (int i = 0; i < height; i++) {
+        map[i].resize(width);
+        for (int j = 0; j < width; j++) {
+            map[i][j] = gs.map[i][j];
+            map[i][j].typ = gs.map[i][j].typ==LAB_SPAWN?
+                            LAB
+                         :
+                            gs.map[i][j].typ==VODA?
+                                KAMEN
+                            :
+                                gs.map[i][j].typ;
+            map[i][j].majitel=gs.map[i][j].majitel==klient?0:gs.map[i][j].majitel==0?klient:gs.map[i][j].majitel;
+            if(((i>0)?(gs.map[i-1][j].majitel!=klient):(1))
+                    &&((j>0)?gs.map[i][j-1].majitel!=klient:1)
+                    &&((i<height-1)?(gs.map[i+1][j].majitel!=klient):1)
+                    &&((j<width-1)?(gs.map[i][j+1].majitel!=klient):1)){
+                map[i][j].majitel = -1;
+                map[i][j].sila_robota = -1;
+            }
+        }
+    }
+}
+
 game_state::game_state(int num_players, mapa gm) {
     if(num_players>gm.maxplayers) chyba("Toľko hráčov sa na túto mapu nezmestí");
+    zelezo.resize(num_players,0);
     round = 0;
     width = gm.width;
     height = gm.height;
@@ -19,7 +51,7 @@ game_state::game_state(int num_players, mapa gm) {
     for (int i = 0; i < height; i++) {
         map[i].resize(width);
         for (int j = 0; j < width; j++) {
-            map[i][j] = {gm.squares[i][j], -1, 0};
+            map[i][j] = {gm.squares[i][j]==LAB_SPAWN?LAB:gm.squares[i][j], -1, 0};
         }
     }
 
@@ -90,8 +122,8 @@ bool mapa::load(string filename) {
             if (r == 255 && g == 255 && b == 255) squares[i][j] = TRAVA;
             else if (r == 0 && g == 0 && b == 0) squares[i][j] = KAMEN;
             else if (r == 0 && g == 0 && b == 255) squares[i][j] = VODA;
-            else if (r == 0 && g == 0 && b == 0) squares[i][j] = LAB;
-            else if (r == 255 && g == 0 && b == 0) squares[i][j] = LAB_SPAWN;
+            else if (r == 255 && g == 0 && b == 0) squares[i][j] = LAB;
+            else if (r == 0 && g == 255 && b == 0) squares[i][j] = LAB_SPAWN;
             else if (r == 255 && g == 255 && b == 0) squares[i][j] = MESTO;
             else return chyba("zla farba %d,%d,%d na pozicii %d,%d v '%s'\n", r, g, b, i, j, filename.c_str());
         }
