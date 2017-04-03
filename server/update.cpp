@@ -25,19 +25,9 @@ struct multisquare{
     robot zlava;
 };
 
-// struct instruction {
-//     int klient_id;
-//     prikaz pr;
-//     int riadok;
-//     int stlpec;
-//     union{
-//         int sila;
-//         smer sm;
-//         };
-// };
 game_state update_game_state(game_state gs, vector<instruction> commands) {
     game_state new_gs = gs;
-    
+    cerr<<"update na kolo "<<new_gs.round<<endl;
     new_gs.round++;
     sort(commands.begin(), commands.end());
     vector<vector<multisquare> > map;
@@ -52,6 +42,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
         }
     }
     //nastav nove pozicie
+    cerr<<"nastav nove pozicie"<<endl;
     for(int i=0; i<commands.size(); i++){
         instruction cmd = commands[i];
         if(i>0&&cmd.klient_id==commands[i-1].klient_id
@@ -108,22 +99,8 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
         
     }
     //zabi krizujucich
-    
-//     struct robot{
-//     int majitel = -1;
-//     int sila = 0;
-//     smer sm = TU;
-// }
-// 
-// struct multisquare{
-//     typ_stvorca typ;
-//     robot bol_tu;
-//     robot zhora;
-//     robot zdola;
-//     robot zprava;
-//     robot zlava;
-// }
-//VLAVO VPRAVO HORE DOLE
+    cerr<<"zabi krizujucich"<<endl;
+
     for(int i=0; i<gs.height; i++){
         for(int j=0; j<gs.width; j++){
             if(map[i][j].bol_tu.sila==0) continue;
@@ -194,7 +171,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
         }
     }
     //postav vojakov v laboch
-    
+    cerr<<"postav v laboch"<<endl;
     for(int i=0; i<commands.size(); i++){
         instruction cmd = commands[i];
         if(i>0&&cmd.klient_id == commands[i-1].klient_id
@@ -222,7 +199,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
     }
     
     //zabi nasobnich
-    
+    cerr<<"pozabijaj"<<endl;
     for(int i=0; i<gs.height; i++){
         for(int j=0; j<gs.width; j++){
             robot bol_tu=map[i][j].bol_tu;
@@ -249,23 +226,25 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
     }
     
     //pocitaj obsadene policka a generuj zelezo
+    cerr<<"pocitaj "<<gs.zelezo.size()<<endl;
     vector<int> policok(gs.zelezo.size(),0);
     vector<int> labov(gs.zelezo.size(),0);
     vector<int> miest(gs.zelezo.size(),0);
-    
-    for(int i=0; i<gs.height; i++){
-        for(int j=0; j<gs.width; j++){
-            new_gs.map[i][j].majitel = map[i][j].bol_tu.majitel;
-            new_gs.map[i][j].sila_robota = map[i][j].bol_tu.sila;
-            if(new_gs.map[i][j].typ==MESTO)miest[map[i][j].bol_tu.majitel]++;
-            if(new_gs.map[i][j].typ==LAB)labov[map[i][j].bol_tu.majitel]++;
-            policok[map[i][j].bol_tu.majitel]++;
-        }
-    }
-    for(int i=0; i<new_gs.zelezo.size(); i++){
-        new_gs.zelezo[i]+=labov[i];
-        new_gs.zelezo[i]+=miest[i];
-        new_gs.zelezo[i]+=policok[i]/9;
-    }
-    return new_gs;
+     for(int i=0; i<gs.height; i++){
+         for(int j=0; j<gs.width; j++){
+             new_gs.map[i][j].majitel = map[i][j].bol_tu.majitel;
+             new_gs.map[i][j].sila_robota = map[i][j].bol_tu.sila;
+             if(new_gs.map[i][j].typ==MESTO&&map[i][j].bol_tu.majitel!=-1)miest[map[i][j].bol_tu.majitel]++;
+             if(new_gs.map[i][j].typ==LAB&&map[i][j].bol_tu.majitel!=-1)labov[map[i][j].bol_tu.majitel]++;
+             if(map[i][j].bol_tu.majitel!=-1)policok[map[i][j].bol_tu.majitel]++;
+         }
+     }
+     for(int i=0; i<new_gs.zelezo.size(); i++){
+         new_gs.zelezo[i]+=labov[i];
+         new_gs.zelezo[i]+=miest[i];
+         new_gs.zelezo[i]+=policok[i]/9;
+     }
+    cerr<<"hotovo"<<endl;
+    gs=new_gs;
+    return gs;
 }

@@ -84,7 +84,7 @@ struct instruction {
 
 struct stvorec {
     typ_stvorca typ;
-    int majitel;
+    int majitel = -1;
     int sila_robota;
 };
 

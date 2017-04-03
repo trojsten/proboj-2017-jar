@@ -38,8 +38,9 @@ int main() {
         }
     }
     p.sila = 10;
+    uloz(cerr, p);
     uloz(cout,p);
-    //cout<<endl;
+    cout<<endl;
 // 	int x = gs.players[ja].position.x;
 // 	int y = gs.players[ja].position.y;
 

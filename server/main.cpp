@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
                 while (true) {
                     int cmd;
                     riadky >> cmd;
-                    fprintf(stderr, "main: nacital som prikaz: %d\n", cmd);
+//                     fprintf(stderr, "main: nacital som od %d prikaz: %d\n",k, cmd);
                     if (riadky.eof()) break;
                     instruction prikaz;
                     prikaz.klient_id = k;
@@ -244,6 +244,7 @@ int main(int argc, char *argv[]) {
                     else {
                         cerr << "Nesprávny vstup " << k << ": nesprávny príkaz '" << cmd << "'" << endl;
                     }
+                    cerr<<k<<" "<<prikaz.pr<<" "<<prikaz.riadok<<" "<<prikaz.stlpec<<" "<<prikaz.sila<<endl;
                     commands.push_back(prikaz);
                 }
             }

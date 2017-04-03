@@ -28,8 +28,16 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
                                 KAMEN
                             :
                                 gs.map[i][j].typ;
-            map[i][j].majitel=gs.map[i][j].majitel==klient?0:gs.map[i][j].majitel==0?klient:gs.map[i][j].majitel;
-            if(((i>0)?(gs.map[i-1][j].majitel!=klient):(1))
+            map[i][j].majitel = (gs.map[i][j].majitel==klient)?
+                                    0
+                                :(
+                                    gs.map[i][j].majitel==0?
+                                        klient
+                                    :gs.map[i][j].majitel
+                                );
+            if(map[i][j].majitel==0)cerr<<i<<" "<<j<<endl;
+            if((map[i][j].majitel!=0)
+                    &&((i>0)?(gs.map[i-1][j].majitel!=klient):(1))
                     &&((j>0)?gs.map[i][j-1].majitel!=klient:1)
                     &&((i<height-1)?(gs.map[i+1][j].majitel!=klient):1)
                     &&((j<width-1)?(gs.map[i][j+1].majitel!=klient):1)){
