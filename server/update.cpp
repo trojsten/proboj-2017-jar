@@ -42,7 +42,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
         }
     }
     //nastav nove pozicie
-    cerr<<"nastav nove pozicie"<<endl;
+    cerr<<"nastav nove pozicie "<<map[5][5].bol_tu.majitel<<endl;
     for(int i=0; i<commands.size(); i++){
         instruction cmd = commands[i];
         if(i>0&&cmd.klient_id==commands[i-1].klient_id
@@ -99,7 +99,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
         
     }
     //zabi krizujucich
-    cerr<<"zabi krizujucich"<<endl;
+    cerr<<"zabi krizujucich "<<map[5][5].bol_tu.majitel<<endl;
 
     for(int i=0; i<gs.height; i++){
         for(int j=0; j<gs.width; j++){
@@ -171,7 +171,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
         }
     }
     //postav vojakov v laboch
-    cerr<<"postav v laboch"<<endl;
+    cerr<<"postav v laboch "<<map[5][5].bol_tu.majitel<<endl;
     for(int i=0; i<commands.size(); i++){
         instruction cmd = commands[i];
         if(i>0&&cmd.klient_id == commands[i-1].klient_id
@@ -199,7 +199,7 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
     }
     
     //zabi nasobnich
-    cerr<<"pozabijaj"<<endl;
+    cerr<<"pozabijaj "<<map[5][5].bol_tu.majitel<<endl;
     for(int i=0; i<gs.height; i++){
         for(int j=0; j<gs.width; j++){
             robot bol_tu=map[i][j].bol_tu;
@@ -207,7 +207,9 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
             robot zdola=map[i][j].zdola;
             robot zprava=map[i][j].zprava;
             robot zlava=map[i][j].zlava;
+            if(i==5&&j==5)    cerr<<"pozabijaj 1 "<<bol_tu.majitel<<endl;
             int ostane = max(max(bol_tu.sila, zhora.sila), max(zdola.sila, max(zprava.sila, zlava.sila)));
+            if (ostane==0)continue;
             int pocet=0;
             if(bol_tu.sila<ostane && bol_tu.sm==TU)bol_tu.sila=0;else pocet++;
             if(zhora.sila<ostane)zhora.sila=0;else pocet++;
@@ -216,17 +218,19 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
             if(zlava.sila<ostane)zlava.sila=0;else pocet++;
             int vytaz =rand()%pocet;
             int bolo=0;
+            if(i==5&&j==5)    cerr<<"pozabijaj 2 "<<bol_tu.majitel<<" ostane "<<ostane<<endl;
             if(bol_tu.sila==ostane && bol_tu.sm==TU){bolo++;}
-            if(zhora.sila==ostane){if(bolo==vytaz){bol_tu=zhora;} bolo++;}
-            if(zdola.sila==ostane){if(bolo==vytaz){bol_tu=zdola;} bolo++;}
-            if(zprava.sila==ostane){if(bolo==vytaz){bol_tu=zprava;} bolo++;}
-            if(zlava.sila==ostane){if(bolo==vytaz){bol_tu=zlava;} bolo++;}
+            if(zhora.sila==ostane){if(bolo==vytaz){bol_tu=zhora;cerr<<"jeden"<<endl;} bolo++;}
+            if(zdola.sila==ostane){if(bolo==vytaz){bol_tu=zdola;cerr<<"dva"<<endl;} bolo++;}
+            if(zprava.sila==ostane){if(bolo==vytaz){bol_tu=zprava;cerr<<"tri"<<endl;} bolo++;}
+            if(zlava.sila==ostane){if(bolo==vytaz){bol_tu=zlava;cerr<<"stiri"<<endl;} bolo++;}
+            if(i==5&&j==5)    cerr<<"pozabijaj 3 "<<bol_tu.majitel<<endl;
             map[i][j].bol_tu = bol_tu;
         }
     }
     
     //pocitaj obsadene policka a generuj zelezo
-    cerr<<"pocitaj "<<gs.zelezo.size()<<endl;
+    cerr<<"pocitaj "<<map[5][5].bol_tu.majitel<<endl;
     vector<int> policok(gs.zelezo.size(),0);
     vector<int> labov(gs.zelezo.size(),0);
     vector<int> miest(gs.zelezo.size(),0);
@@ -245,6 +249,5 @@ game_state update_game_state(game_state gs, vector<instruction> commands) {
          new_gs.zelezo[i]+=policok[i]/9;
      }
     cerr<<"hotovo"<<endl;
-    gs=new_gs;
-    return gs;
+    return new_gs;
 }
