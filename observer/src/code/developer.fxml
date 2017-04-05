@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextFlow?>
+<GridPane fx:id="gridPane" stylesheets="@../defaultCssStyle/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="code.Controller">
+   <columnConstraints>
+      <ColumnConstraints hgrow="ALWAYS" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints vgrow="ALWAYS" />
+   </rowConstraints>
+   <children>
+      <SplitPane dividerPositions="0.5" prefHeight="832.0" prefWidth="967.0">
+        <items>
+          <SplitPane dividerPositions="0.7" minHeight="0.0" minWidth="0.0" orientation="VERTICAL">
+             <items>
+                 <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="260.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                    <content>
+                       <Pane fx:id="pane" />
+                    </content>
+                 </ScrollPane>
+                 <TableView fx:id="table" prefHeight="250.0" prefWidth="469.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                   <columns>
+                     <TableColumn minWidth="100.0" text="Meno" />
+                     <TableColumn minWidth="100.0" text="Body" />
+                   </columns>
+                    <columnResizePolicy>
+                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                 </TableView>
+             </items>
+            </SplitPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0">
+               <children>
+                  <TextField fx:id="commandLine" onKeyPressed="#commandLineTyped" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                  <ScrollPane fx:id="scrollPaneConsoleArea" fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                     <content>
+                        <TextFlow fx:id="consoleArea" disable="true" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</GridPane>

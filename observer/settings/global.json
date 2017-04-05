@@ -1,0 +1,17 @@
+{
+  "mode": "developer",
+  "resolution": {
+    "width": 800,
+    "height": 800
+  },
+  "maximize": true,
+  "fullscreen": true,
+  "frameTime": 300,
+  "frameTimeStep": 100,
+  "pause": "Ctrl+Space",
+  "incSpeed": "Ctrl+Add",
+  "decSpeed": "Ctrl+Subtract",
+  "useSmoothing": true,
+  "maxConsoleMessages": 5000,
+  "maxMessageLength": 20000
+}
