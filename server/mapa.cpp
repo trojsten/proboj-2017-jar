@@ -9,25 +9,26 @@ using namespace std;
 
 #define chyba(...) (fprintf(stderr, __VA_ARGS__), false)
 
+
+
 masked_game_state::masked_game_state(game_state gs, int klient) {
     zelezo = gs.zelezo[klient];
     round = gs.round;
     width = gs.width;
     height = gs.height;
     map.resize(height);
-    cerr<<"zamaskoval "<<height<<endl;
 
     for (int i = 0; i < height; i++) {
         map[i].resize(width);
         for (int j = 0; j < width; j++) {
             map[i][j] = gs.map[i][j];
-            map[i][j].typ = gs.map[i][j].typ==LAB_SPAWN?
-                            LAB
-                         :
-                            gs.map[i][j].typ==VODA?
-                                KAMEN
-                            :
-                                gs.map[i][j].typ;
+//             map[i][j].typ = gs.map[i][j].typ==LAB_SPAWN?
+//                             LAB
+//                          :
+//                             gs.map[i][j].typ==VODA?
+//                                 KAMEN
+//                             :
+//                                 gs.map[i][j].typ;
             map[i][j].majitel = (gs.map[i][j].majitel==klient)?
                                     0
                                 :(
@@ -35,7 +36,7 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
                                         klient
                                     :gs.map[i][j].majitel
                                 );
-            if(map[i][j].majitel==0)cerr<<i<<" "<<j<<endl;
+
             if((map[i][j].majitel!=0)
                     &&((i>0)?(gs.map[i-1][j].majitel!=klient):(1))
                     &&((j>0)?gs.map[i][j-1].majitel!=klient:1)
@@ -49,7 +50,7 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
 }
 
 game_state::game_state(int num_players, mapa gm) {
-    if(num_players>gm.maxplayers) chyba("Toľko hráčov sa na túto mapu nezmestí");
+    if(num_players>gm.maxplayers) chyba("Toľko hráčov sa na túto mapu nezmestí je tu %d miest",gm.maxplayers);
     zelezo.resize(num_players,0);
     round = 0;
     width = gm.width;
@@ -59,7 +60,8 @@ game_state::game_state(int num_players, mapa gm) {
     for (int i = 0; i < height; i++) {
         map[i].resize(width);
         for (int j = 0; j < width; j++) {
-            map[i][j] = {gm.squares[i][j]==LAB_SPAWN?LAB:gm.squares[i][j], -1, 0};
+            map[i][j] = {//gm.squares[i][j]==LAB_SPAWN?LAB:gm.squares[i][j], 
+                        -1, 0};
         }
     }
 
@@ -91,6 +93,15 @@ mapa::mapa(int w, int h) {
     }
 }
 
+void mapa::zamaskuj(bool voda) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (squares[i][j] == LAB_SPAWN)squares[i][j] = LAB;
+            if (!voda && squares[i][j] == VODA) squares[i][j]=KAMEN;
+        }
+    }
+}
+
 bool mapa::load(string filename) {
     FILE *in = fopen(filename.c_str(), "r");
     if (!in) return chyba("neviem citat '%s'\n", filename.c_str());
@@ -114,6 +125,7 @@ bool mapa::load(string filename) {
 
     width = w;
     height = h;
+    maxplayers = 0;
     squares.clear();
     squares.resize(h);
     for (unsigned i = 0; i < h; i++) {
@@ -131,7 +143,7 @@ bool mapa::load(string filename) {
             else if (r == 0 && g == 0 && b == 0) squares[i][j] = KAMEN;
             else if (r == 0 && g == 0 && b == 255) squares[i][j] = VODA;
             else if (r == 255 && g == 0 && b == 0) squares[i][j] = LAB;
-            else if (r == 0 && g == 255 && b == 0) squares[i][j] = LAB_SPAWN;
+            else if (r == 0 && g == 255 && b == 0){ squares[i][j] = LAB_SPAWN; maxplayers++;}
             else if (r == 255 && g == 255 && b == 0) squares[i][j] = MESTO;
             else return chyba("zla farba %d,%d,%d na pozicii %d,%d v '%s'\n", r, g, b, i, j, filename.c_str());
         }

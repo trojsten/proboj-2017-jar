@@ -20,20 +20,22 @@ int Proces::getPid() {
 
 void Proces::write (string data) {
     unsigned cur = 0;
+    fprintf(stderr, "%d\n", data.size());
     while (cur < data.size()) {
         int wlen = 1024;
         if (cur + wlen > data.size()) wlen = data.size() - cur;
         int status = ::write(writefd, data.c_str() + cur, wlen);
-        if (status != (int) wlen) {
+        if (status != (int) wlen){// && errno!=EAGAIN) {
             if (status == -1) {
-                fprintf(stderr, "write: pid %d: %s\n", pid, strerror(errno));
+                fprintf(stderr, "write(%d): pid %d: %s\n",cur, pid, strerror(errno));
             }
             else {
                 fprintf(stderr, "write: pid %d: zapisali sme len %d bajtov z %d\n", pid, status, wlen);
             }
             return ;
         }
-        cur += wlen;
+        //if(errno!=EAGAIN)
+        cur += status;
     }
 }
 
@@ -87,9 +89,9 @@ void Proces::restartuj () {
     int flags = fcntl(child2parent[0], F_GETFL);
     fcntl(child2parent[0], F_SETFL, flags | O_NONBLOCK);
     
-    int flags2 = fcntl(parent2child[1], F_GETFL);
-    fcntl(parent2child[1], F_SETFL, flags2 | O_NONBLOCK);
-    
+//     int flags2 = fcntl(parent2child[1], F_GETFL);
+//     fcntl(parent2child[1], F_SETFL, flags2 | O_NONBLOCK);
+//     
     int status = fork();
     if (status == -1) {
         fprintf(stderr, "restartuj/fork: pid %d: %s\n", pid, strerror(errno));

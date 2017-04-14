@@ -17,8 +17,8 @@ using namespace std;
 #include "mapa.h"
 #include "marshal.h"
 
-const int MAX_CITAJ = 1024;
-const int ROUND_TIME = 40;
+const int MAX_CITAJ = 17890;
+const int ROUND_TIME = 2000;
 
 vector<Klient> klienti;
 
@@ -92,11 +92,21 @@ int main(int argc, char *argv[]) {
     fstream observationstream(obsubor.c_str(), fstream::out | fstream::trunc);
     checkOstream(observationstream, "observation");
     
-    // random_shuffle(argv + 3, argv + argc);
+    random_shuffle(argv + 3, argv + argc);
     set<string> uzMena;
     
     int pocet_hracov = argc - 3;
     observationstream << pocet_hracov << endl;
+    
+    // nacitame mapu
+    mapa gm;
+    if (!gm.load(argv[2])) {
+        fprintf(stderr, "main: nenacital som mapu\n");
+        exit(1);
+    }
+    game_state gs(pocet_hracov, gm);
+    gm.zamaskuj(1);
+    uloz(observationstream, gm);
     
     for (int i = 3; i < argc; i++) {
         string klientAdr(argv[i]);
@@ -110,10 +120,13 @@ int main(int argc, char *argv[]) {
             meno += "+";
         }
         uzMena.insert(meno);
-//         // posleme klientovi, kolkaty v poradi je
-//         string uvodneData = "hrac " + to_string(i - 3) + "\n";
-//         
-        klienti.push_back(Klient(meno, "", klientAdr, zaznAdr));
+        
+        stringstream uvodne_data;
+        gm.zamaskuj(0);
+        uloz(uvodne_data, gm);
+        uvodne_data<<endl;
+        
+        klienti.push_back(Klient(meno, uvodne_data.str(), klientAdr, zaznAdr));
         
         string farba;
         if (dajNahodnuFarbu) {
@@ -133,24 +146,15 @@ int main(int argc, char *argv[]) {
         observationstream << meno << " " << farba << endl;
     }
     
-    // nacitame mapu
-    mapa gm;
-    if (!gm.load(argv[2])) {
-        fprintf(stderr, "main: nenacital som mapu\n");
-        exit(1);
-    }
-    observationstream << gm.width << " " << gm.height << endl;
-    
-    game_state gs(pocet_hracov, gm);
     
     // spusti klientov
     for (unsigned k = 0; k < klienti.size(); k++) {
         klienti[k].restartuj();
     }
-    
+    usleep(1000 * 1000ll);
     for (unsigned k = 0; k < klienti.size(); k++) {
         stringstream masked_state_str;
-        masked_game_state mgs(gs,k);
+        masked_game_state mgs(gs, k);
         uloz(masked_state_str, mgs);
         masked_state_str << endl;
         klienti[k].posli(masked_state_str.str());
@@ -173,9 +177,10 @@ int main(int argc, char *argv[]) {
                     klienti[k].restartuj();
                     // klientovi posleme relevantne data
                     if (klienti[k].zije()) {
-                        //TODO tiez maskovat
                         stringstream old_state_str;
-                        uloz(old_state_str, gs);
+                        masked_game_state mgs(gs,k);
+                        uloz(old_state_str, mgs);
+                        old_state_str<<endl;
                         klienti[k].posli(old_state_str.str());
                     }
                     continue;
@@ -191,9 +196,9 @@ int main(int argc, char *argv[]) {
                     instruction prikaz;
                     prikaz.klient_id = k;
                     if (cmd == POSUN) {
-                        prikaz.pr=POSUN;
+                        prikaz.pr = POSUN;
                         int r, s;
-                        riadky >> r>>s;
+                        riadky >> r >> s;
                         if (riadky.eof()) {
                             cerr << "Nesprávny príkaz " << k << ": žiadne id robota za prikazom POSUN" << endl;
                             continue;
@@ -206,8 +211,6 @@ int main(int argc, char *argv[]) {
                             cerr << "Nesprávny príkaz " << k << ": žiadny smer za príkazom POSUN" << endl;
                             continue;
                         }
-                        
-                        //cout << "hrac " << k << "'" << dir << "'" << endl;
                         //VLAVO, VPRAVO, HORE, DOLE
                         if (dir == VLAVO)
                             prikaz.sm = VLAVO;
@@ -224,12 +227,12 @@ int main(int argc, char *argv[]) {
                     else if (cmd == POSTAV) {
                         prikaz.pr=POSTAV;
                         int r, s;
-                        riadky >> r>>s;
+                        riadky >> r >> s;
                         if (riadky.eof()) {
                             cerr << "Nesprávny príkaz " << k << ": žiadne id labu za prikazom POSTAV" << endl;
                             continue;
                         }
-                         prikaz.riadok = r;
+                        prikaz.riadok = r;
                         prikaz.stlpec = s;
                         int sila;
                         riadky >> sila;
@@ -239,17 +242,19 @@ int main(int argc, char *argv[]) {
                         }
                         prikaz.sila = sila;
                         
-                        //cout << "hrac " << k << "'" << dir << "'" << endl;
+                    }
+                    else if (cmd == KONIEC){
+                        break;
                     }
                     else {
                         cerr << "Nesprávny vstup " << k << ": nesprávny príkaz '" << cmd << "'" << endl;
                     }
-                    cerr<<k<<" "<<prikaz.pr<<" "<<prikaz.riadok<<" "<<prikaz.stlpec<<" "<<prikaz.sila<<endl;
                     commands.push_back(prikaz);
                 }
             }
+            break;
         }
-        gs = update_game_state(gs, commands);
+        gs = update_game_state(gm, gs, commands);
         
         // TODO zabijeme mrtvych hracov
 //         for (unsigned k = 0; k < klienti.size(); k++) {

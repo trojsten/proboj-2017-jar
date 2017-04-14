@@ -15,7 +15,7 @@ enum smer {
 };
 
 enum prikaz {
-    POSUN, POSTAV
+    POSUN, POSTAV, KONIEC
 };
 
 enum typ_stvorca {
@@ -34,6 +34,13 @@ struct pohni_robota {
     int riadok;
     int stlpec;
     smer sm;
+};
+
+union Prikaz{
+    postav_robota p;
+    pohni_robota q;
+    Prikaz(postav_robota a){p=a;}
+    Prikaz(pohni_robota a){q=a;}
 };
 
 struct instruction {
@@ -73,17 +80,9 @@ struct instruction {
                     );
     }
 };
-    
-// struct bod {
-//     int x, y;
-//     
-//     bool operator== (const bod A) const {
-//         return x == A.x && y == A.y;
-//     }
-// };
+
 
 struct stvorec {
-    typ_stvorca typ;
     int majitel = -1;
     int sila_robota;
 };
@@ -95,11 +94,13 @@ struct mapa {
     vector<vector<typ_stvorca>> squares;
     
     mapa(){}
-
+    
     mapa(int width, int height);
     
     bool load (string filename);
+    void zamaskuj(bool voda);
 };
+
 
 struct game_state {
     int round;
@@ -157,9 +158,14 @@ reflection(pohni_robota)
 end()
 
 reflection(stvorec)
-    member(typ)
     member(majitel)
     member(sila_robota)
+end()
+
+reflection(mapa)
+    member(width)
+    member(height)
+    member(squares)
 end()
 
 reflection(game_state)
