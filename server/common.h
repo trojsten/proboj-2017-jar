@@ -22,25 +22,11 @@ enum typ_stvorca {
     TRAVA, KAMEN, VODA, LAB, MESTO, LAB_SPAWN
 };
 
-struct postav_robota {
-    prikaz pr = POSTAV;
+struct Prikaz {
+    prikaz pr;
     int riadok;
     int stlpec;
-    int sila;
-};
-
-struct pohni_robota {
-    prikaz pr = POSUN;
-    int riadok;
-    int stlpec;
-    smer sm;
-};
-
-union Prikaz{
-    postav_robota p;
-    pohni_robota q;
-    Prikaz(postav_robota a){p=a;}
-    Prikaz(pohni_robota a){q=a;}
+    int instrukcia;
 };
 
 struct instruction {
@@ -106,6 +92,7 @@ struct game_state {
     int round;
     int width, height;
     vector<int> zelezo;
+    vector<int> skore;
     vector<vector<stvorec> > map;
 
     game_state() {}
@@ -113,10 +100,10 @@ struct game_state {
 };
 
 struct masked_game_state {
-    int round;
-    int width, height;
+    int kolo;
+    int vyska, sirka;
     int zelezo;
-    vector<vector<stvorec> > map;
+    vector<vector<stvorec> > mapa;
     masked_game_state(){}
     masked_game_state(game_state gs, int klient);
 };
@@ -143,18 +130,11 @@ reflectenum(typ_stvorca)
 // end()
 
 
-reflection(postav_robota)
+reflection(Prikaz)
     member(pr)
     member(riadok)
     member(stlpec)
-    member(sila)
-end()
-
-reflection(pohni_robota)
-    member(pr)
-    member(riadok)
-    member(stlpec)
-    member(sm)
+    member(instrukcia)
 end()
 
 reflection(stvorec)
@@ -173,14 +153,15 @@ reflection(game_state)
     member(width)
     member(height)
     member(zelezo)
+    member(skore)
     member(map)
 end()
 
 reflection(masked_game_state)
-    member(round)
-    member(width)
-    member(height)
+    member(kolo)
+    member(sirka)
+    member(vyska)
     member(zelezo)
-    member(map)
+    member(mapa)
 end()
 #endif

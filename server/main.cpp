@@ -187,8 +187,13 @@ int main(int argc, char *argv[]) {
                 }
                 
                 stringstream riadky(klienti[k].citaj(MAX_CITAJ));
-                
-                while (true) {
+                int pocet;
+                riadky >> pocet;
+                for(int i=0; i<pocet; i++) {
+                    if (riadky.eof()) {
+                        cerr << "Žiadny príkaz klient " << k << endl;
+                        break;
+                    }
                     int cmd;
                     riadky >> cmd;
 //                     fprintf(stderr, "main: nacital som od %d prikaz: %d\n",k, cmd);
@@ -244,6 +249,7 @@ int main(int argc, char *argv[]) {
                         
                     }
                     else if (cmd == KONIEC){
+                        cerr << "klient "<<k<<" ukončil vstup"<<endl;
                         break;
                     }
                     else {

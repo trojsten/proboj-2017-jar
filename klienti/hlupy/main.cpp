@@ -25,9 +25,26 @@ void inicializuj() {
 // tato funkcia ma vratit vector prikazov
 vector<Prikaz> zistiTah() {
     vector<Prikaz> instrukcie;
-    postav_robota p;
-    //  (sem patri vas kod)
-    instrukcie.push_back(Prikaz(p));
+    for(int i=0; i<stav.vyska; i++)
+        for(int j=0; j<stav.sirka; j++){
+            if (stav.mapa[i][j].majitel==0 && stav.mapa[i][j].sila_robota>0){
+                Prikaz p;
+                p.pr=POSUN;
+                p.riadok=i;
+                p.stlpec=j;
+                p.instrukcia=rand()%4;
+                instrukcie.push_back(p);
+            }
+            if (stav.mapa[i][j].majitel==0 && m.squares[i][j]==LAB &&stav.mapa[i][j].sila_robota==0){
+                Prikaz p;
+                p.pr=POSTAV;
+                p.riadok=i;
+                p.stlpec=j;
+                p.instrukcia=rand()%(stav.zelezo+1);
+                stav.zelezo-=p.instrukcia;
+                instrukcie.push_back(p);
+            }
+        }
     return instrukcie;
 }
 
@@ -39,11 +56,13 @@ int main() {
   srand(seed);
 
   nacitaj(cin, m);
+  uloz(cerr, m);
   fprintf(stderr, "START pid=%d, seed=%u\n", getpid(), seed);
   inicializuj();
 
   while (cin.good()) {
     nacitaj(cin, stav);
+    uloz(cerr, zistiTah());
     uloz(cout, zistiTah());
     cout << "2" << endl;   // 2 a flush = koniec odpovede
   }

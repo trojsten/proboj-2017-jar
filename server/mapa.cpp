@@ -13,23 +13,16 @@ using namespace std;
 
 masked_game_state::masked_game_state(game_state gs, int klient) {
     zelezo = gs.zelezo[klient];
-    round = gs.round;
-    width = gs.width;
-    height = gs.height;
-    map.resize(height);
+    kolo = gs.round;
+    sirka = gs.width;
+    vyska = gs.height;
+    mapa.resize(vyska);
 
-    for (int i = 0; i < height; i++) {
-        map[i].resize(width);
-        for (int j = 0; j < width; j++) {
-            map[i][j] = gs.map[i][j];
-//             map[i][j].typ = gs.map[i][j].typ==LAB_SPAWN?
-//                             LAB
-//                          :
-//                             gs.map[i][j].typ==VODA?
-//                                 KAMEN
-//                             :
-//                                 gs.map[i][j].typ;
-            map[i][j].majitel = (gs.map[i][j].majitel==klient)?
+    for (int i = 0; i < vyska; i++) {
+        mapa[i].resize(sirka);
+        for (int j = 0; j < sirka; j++) {
+            mapa[i][j] = gs.map[i][j];
+            mapa[i][j].majitel = (gs.map[i][j].majitel==klient)?
                                     0
                                 :(
                                     gs.map[i][j].majitel==0?
@@ -37,13 +30,13 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
                                     :gs.map[i][j].majitel
                                 );
 
-            if((map[i][j].majitel!=0)
+            if((mapa[i][j].majitel!=0)
                     &&((i>0)?(gs.map[i-1][j].majitel!=klient):(1))
                     &&((j>0)?gs.map[i][j-1].majitel!=klient:1)
-                    &&((i<height-1)?(gs.map[i+1][j].majitel!=klient):1)
-                    &&((j<width-1)?(gs.map[i][j+1].majitel!=klient):1)){
-                map[i][j].majitel = -1;
-                map[i][j].sila_robota = -1;
+                    &&((i<vyska-1)?(gs.map[i+1][j].majitel!=klient):1)
+                    &&((j<sirka-1)?(gs.map[i][j+1].majitel!=klient):1)){
+                mapa[i][j].majitel = -1;
+                mapa[i][j].sila_robota = -1;
             }
         }
     }
@@ -52,6 +45,7 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
 game_state::game_state(int num_players, mapa gm) {
     if(num_players>gm.maxplayers) chyba("Toľko hráčov sa na túto mapu nezmestí je tu %d miest",gm.maxplayers);
     zelezo.resize(num_players,0);
+    skore.resize(num_players,0);
     round = 0;
     width = gm.width;
     height = gm.height;
