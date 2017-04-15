@@ -27,7 +27,7 @@ vector<postav_robota> zistiTah() {
     vector<postav_robota> instrukcie;
     postav_robota p;
     //  (sem patri vas kod)
-    instrukcie.push_back(p);
+//     instrukcie.push_back(p);
     return instrukcie;
 }
 
@@ -39,6 +39,7 @@ int main() {
   srand(seed);
 
   nacitaj(cin, m);
+  uloz(cerr, m);
   fprintf(stderr, "START pid=%d, seed=%u\n", getpid(), seed);
   inicializuj();
 
