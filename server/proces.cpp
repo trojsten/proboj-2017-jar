@@ -17,10 +17,10 @@ Proces::Proces () : cwd("."), pid(-1), writefd(-1), readfd(-1) {}
 int Proces::getPid() {
     return pid;
 }
-
+//TODO timeout
 void Proces::write (string data) {
     unsigned cur = 0;
-    fprintf(stderr, "%d\n", data.size());
+//     fprintf(stderr, "%d\n", data.size());
     while (cur < data.size()) {
         int wlen = 1024;
         if (cur + wlen > data.size()) wlen = data.size() - cur;

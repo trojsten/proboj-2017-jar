@@ -45,15 +45,17 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
         if(i>0&&cmd.klient_id == commands[i-1].klient_id
               &&cmd.pr == commands[i-1].pr
               &&cmd.riadok == commands[i-1].riadok
-              &&cmd.stlpec == commands[i-1].stlpec)
+              &&cmd.stlpec == commands[i-1].stlpec){
+            cerr<<cmd.klient_id<<" je chudák, opakuje príkazy"<<endl;
             continue;
+        }
         if(cmd.pr==POSUN){
             if(cmd.klient_id != map[cmd.riadok][cmd.stlpec].bol_tu.majitel){
                 cerr<<cmd.klient_id<<" je chudák, chce hýbať robotom ktorý mu nepatrí"<<endl;
                 continue;
             }
             if(map[cmd.riadok][cmd.stlpec].bol_tu.sila == 0){
-                cerr<<cmd.klient_id<<" je chudák, chce hýbať robotom ktorý neexistuje"<<endl;
+                cerr<<cmd.klient_id<<" je chudák, chce hýbať robotom ktorý neexistuje na "<<cmd.riadok<<" "<<cmd.stlpec<<endl;
                 continue;
             }
             if(cmd.sm == VLAVO){
@@ -246,6 +248,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
          new_gs.zelezo[i]+=labov[i];
          new_gs.zelezo[i]+=miest[i];
          new_gs.zelezo[i]+=policok[i]/9;
+         new_gs.skore[i]+=labov[i]+miest[i]+policok[i]/9;
      }
     cerr<<"hotovo"<<endl;
     return new_gs;

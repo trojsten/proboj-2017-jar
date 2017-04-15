@@ -45,6 +45,7 @@ string Klient::citaj (unsigned cap) {
     }
     string res = precitane + nove.substr(0,i);
     precitane = nove.substr(i);
+//     loguj("%s\n",res.c_str());
     return res;
 }
 

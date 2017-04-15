@@ -23,31 +23,28 @@ void inicializuj() {
 
 // main() zavola tuto funkciu, ked nacita novy stav hry, a ocakava instrukcie
 // tato funkcia ma vratit vector prikazov
-vector<postav_robota> zistiTah() {
-    vector<postav_robota> instrukcie;
-    postav_robota p;
+vector<Prikaz> zistiTah() {
+    vector<Prikaz> instrukcie;
     //  (sem patri vas kod)
-//     instrukcie.push_back(p);
     return instrukcie;
 }
 
 
 int main() {
-  // v tejto funkcii su vseobecne veci, nemusite ju menit (ale mozte).
+    // v tejto funkcii su vseobecne veci, nemusite ju menit (ale mozte).
+    
+    unsigned int seed = time(NULL) * getpid();
+    srand(seed);
+    
+    nacitaj(cin, m);
+    fprintf(stderr, "START pid=%d, seed=%u\n", getpid(), seed);
+    inicializuj();
 
-  unsigned int seed = time(NULL) * getpid();
-  srand(seed);
+    while (cin.good()) {
+        nacitaj(cin, stav);
+        uloz(cout, zistiTah());
+        cout << "2" << endl;   // 2 a flush = koniec odpovede
+    }
 
-  nacitaj(cin, m);
-  uloz(cerr, m);
-  fprintf(stderr, "START pid=%d, seed=%u\n", getpid(), seed);
-  inicializuj();
-
-  while (cin.good()) {
-    nacitaj(cin, stav);
-    uloz(cout, zistiTah());
-    cout << "2" << endl;   // 2 a flush = koniec odpovede
-  }
-
-  return 0;
+    return 0;
 }

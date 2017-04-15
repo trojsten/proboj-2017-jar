@@ -18,7 +18,7 @@ using namespace std;
 #include "marshal.h"
 
 const int MAX_CITAJ = 17890;
-const int ROUND_TIME = 2000;
+const int ROUND_TIME = 200;
 
 vector<Klient> klienti;
 
@@ -169,9 +169,16 @@ int main(int argc, char *argv[]) {
     while (last_rounds != 0 && gs.round < MAX_POCET_KOL) {
         cerr << "tah " << gs.round << "\n";
         vector<instruction> commands;
-        
-        while (gettime() - lasttime < ROUND_TIME) {
+        bool vsetci_skoncili = 0;
+        vector<bool> skoncil(klienti.size(), 0);
+        while (gettime() - lasttime < ROUND_TIME && !vsetci_skoncili) {
+            usleep(1);
             // fetchujeme spravy klientov, ale este nesimulujeme kolo
+//             cerr<<"whle bezi "<<vsetci_skoncili<<endl;
+            vsetci_skoncili=1;
+            for (unsigned k = 0; k < klienti.size(); k++) {
+                if(!skoncil[k]) vsetci_skoncili=0;
+            }
             for (unsigned k = 0; k < klienti.size(); k++) {
                 if (!klienti[k].zije()) {
                     klienti[k].restartuj();
@@ -188,10 +195,11 @@ int main(int argc, char *argv[]) {
                 
                 stringstream riadky(klienti[k].citaj(MAX_CITAJ));
                 int pocet;
+                if (riadky.eof()) break;
                 riadky >> pocet;
-                for(int i=0; i<pocet; i++) {
+                for(int i=0; i<pocet+1; i++) {
                     if (riadky.eof()) {
-                        cerr << "Žiadny príkaz klient " << k << endl;
+//                         cerr << "Žiadny príkaz klient " << k << endl;
                         break;
                     }
                     int cmd;
@@ -249,6 +257,7 @@ int main(int argc, char *argv[]) {
                         
                     }
                     else if (cmd == KONIEC){
+                        skoncil[k]=1;
                         cerr << "klient "<<k<<" ukončil vstup"<<endl;
                         break;
                     }
@@ -258,7 +267,7 @@ int main(int argc, char *argv[]) {
                     commands.push_back(prikaz);
                 }
             }
-            break;
+            //break;
         }
         gs = update_game_state(gm, gs, commands);
         
@@ -316,9 +325,9 @@ int main(int argc, char *argv[]) {
     
     ofstream rankstream((zaznAdr+"/rank").c_str());
     checkOstream(rankstream, zaznAdr+"/rank");
-//     for (unsigned i = 0; i < gs.players.size(); i++) {
-//         rankstream << /*klienti[i].meno <<*/ gs.players[i].score << "\n";
-//     }
+    for (unsigned i = 0; i < klienti.size(); i++) {
+        rankstream << klienti[i].meno << " " << gs.skore[i] << "\n";
+    }
     rankstream.close();
     
     // +- info o dlzke hry
