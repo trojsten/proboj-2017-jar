@@ -47,6 +47,18 @@ struct mapa {
     void zamaskuj(bool voda);
 };
 
+//tento struct je interný, ten pod ním je zaujímavý
+struct game_state {
+    int round;
+    int width, height;
+    vector<int> zelezo;
+    vector<int> skore;
+    vector<vector<stvorec> > map;
+
+    game_state() {}
+    game_state(int num_players, mapa gm);
+};
+
 struct masked_game_state {
     int kolo;
     int vyska, sirka;
@@ -95,16 +107,7 @@ struct instruction {
     }
 };
 
-struct game_state {
-    int round;
-    int width, height;
-    vector<int> zelezo;
-    vector<int> skore;
-    vector<vector<stvorec> > map;
 
-    game_state() {}
-    game_state(int num_players, mapa gm);
-};
 
 #endif
 
