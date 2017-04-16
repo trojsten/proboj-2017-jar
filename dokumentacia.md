@@ -40,7 +40,9 @@ a potom zadáte príkaz `java -jar ./dist/Proboj.jar ../zaznamy/01`.
 Ak vám java nefunguje, môžete použiť alternatívny observer ktorý nieje taký 
 pekný, a nezobrazuje všetko, ale beží v prehliadači. Spusí sa keď otvoríte 
 `observer/observer.html` a zobrazí záznam `zaznamy/01`. ak používate 
-chrome musíte ho spustiť príkazom `google-chrome --allow-file-access-from-files`.
+chrome musíte ho spustiť príkazom `google-chrome --allow-file-access-from-files`
+(ak uz mate spusteny chrome, tak sa to vam moze rozbit, a preto odporucame 
+pouzit `chromium-browser` (da sa nainstalovat cez `apt-get`)).
 
 Na začiatku hry dostane váš klient informácie o hre --- terén mapy.
 Tiež má pritom viac času, aby sa mohol inicializovať --- server chvíľu počká, 
