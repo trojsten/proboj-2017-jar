@@ -6,7 +6,7 @@
 #include "common.cpp"
 
 //using namespace std;
-
+//TODO aktualizovať, toto neexistuje
 bool nacitajMapu(mapa& mapa, string filename);
 
 

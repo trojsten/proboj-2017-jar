@@ -5,10 +5,7 @@
 
 using namespace std;
 
-//game_state zamaskuj(int komu
-
 #define chyba(...) (fprintf(stderr, __VA_ARGS__), false)
-
 
 
 masked_game_state::masked_game_state(game_state gs, int klient) {
@@ -54,8 +51,7 @@ game_state::game_state(int num_players, mapa gm) {
     for (int i = 0; i < height; i++) {
         map[i].resize(width);
         for (int j = 0; j < width; j++) {
-            map[i][j] = {//gm.squares[i][j]==LAB_SPAWN?LAB:gm.squares[i][j], 
-                        -1, 0};
+            map[i][j] = {-1, 0};
         }
     }
 
@@ -132,7 +128,7 @@ bool mapa::load(string filename) {
             int g = fgetc(in);
             int b = fgetc(in);
             if (r == EOF || g == EOF || b == EOF) return chyba("necakany EOF pri citani '%s'\n", filename.c_str());
-            // TRAVA, KAMEN, VODA, LAB, LAB_SPAWN, MESTO
+
             if (r == 255 && g == 255 && b == 255) squares[i][j] = TRAVA;
             else if (r == 0 && g == 0 && b == 0) squares[i][j] = KAMEN;
             else if (r == 0 && g == 0 && b == 255) squares[i][j] = VODA;

@@ -18,6 +18,7 @@ enum prikaz {
     POSUN, POSTAV, KONIEC
 };
 
+//VODA a LAB_SPAWN sú len pre interné potreby, klient ich nevidí 
 enum typ_stvorca {
     TRAVA, KAMEN, VODA, LAB, MESTO, LAB_SPAWN
 };
@@ -26,9 +27,36 @@ struct Prikaz {
     prikaz pr;
     int riadok;
     int stlpec;
-    int instrukcia;
+    int instrukcia; //smer alebo sila robota, podla prikazu
 };
 
+struct stvorec {
+    int majitel = -1;
+    int sila_robota;
+};
+
+struct mapa {
+    int width, height, maxplayers;
+    vector<vector<typ_stvorca>> squares;
+    
+    mapa(){}
+    
+    mapa(int width, int height);
+    
+    bool load (string filename);
+    void zamaskuj(bool voda);
+};
+
+struct masked_game_state {
+    int kolo;
+    int vyska, sirka;
+    int zelezo;
+    vector<vector<stvorec> > mapa;
+    masked_game_state(){}
+    masked_game_state(game_state gs, int klient);
+};
+
+//dalej su interné štruktúri, asi vám nepomôžu, ale kľudne si ich pozrite
 struct instruction {
     int klient_id;
     prikaz pr;
@@ -67,27 +95,6 @@ struct instruction {
     }
 };
 
-
-struct stvorec {
-    int majitel = -1;
-    int sila_robota;
-};
-
-
-// UCASTNICI: tento struct je pre vas nedolezity
-struct mapa {
-    int width, height, maxplayers;
-    vector<vector<typ_stvorca>> squares;
-    
-    mapa(){}
-    
-    mapa(int width, int height);
-    
-    bool load (string filename);
-    void zamaskuj(bool voda);
-};
-
-
 struct game_state {
     int round;
     int width, height;
@@ -99,18 +106,9 @@ struct game_state {
     game_state(int num_players, mapa gm);
 };
 
-struct masked_game_state {
-    int kolo;
-    int vyska, sirka;
-    int zelezo;
-    vector<vector<stvorec> > mapa;
-    masked_game_state(){}
-    masked_game_state(game_state gs, int klient);
-};
-
-
-
 #endif
+
+// tieto udaje pouziva marshal.cpp aby vedel ako tie struktury ukladat a nacitavat (je to magicke makro)
 
 #ifdef reflectenum
 
@@ -120,15 +118,7 @@ reflectenum(typ_stvorca)
 
 #endif
 
-
 #ifdef reflection
-// tieto udaje pouziva marshal.cpp aby vedel ako tie struktury ukladat a nacitavat (je to magicke makro)
-
-// reflection(bod)
-//     member(x)
-//     member(y)
-// end()
-
 
 reflection(Prikaz)
     member(pr)

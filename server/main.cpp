@@ -174,7 +174,6 @@ int main(int argc, char *argv[]) {
         while (gettime() - lasttime < ROUND_TIME && !vsetci_skoncili) {
             usleep(1);
             // fetchujeme spravy klientov, ale este nesimulujeme kolo
-//             cerr<<"whle bezi "<<vsetci_skoncili<<endl;
             vsetci_skoncili=1;
             for (unsigned k = 0; k < klienti.size(); k++) {
                 if(!skoncil[k]) vsetci_skoncili=0;
@@ -199,12 +198,10 @@ int main(int argc, char *argv[]) {
                 riadky >> pocet;
                 for(int i=0; i<pocet+1; i++) {
                     if (riadky.eof()) {
-//                         cerr << "Žiadny príkaz klient " << k << endl;
                         break;
                     }
                     int cmd;
                     riadky >> cmd;
-//                     fprintf(stderr, "main: nacital som od %d prikaz: %d\n",k, cmd);
                     if (riadky.eof()) break;
                     instruction prikaz;
                     prikaz.klient_id = k;
@@ -296,7 +293,7 @@ int main(int argc, char *argv[]) {
         lasttime = gettime();
         
         observationstream << observer_state_str.str();
-        //TODO ukoncit hru ak zije iba jeden
+        //TODO ukoncit hru ak zije iba jeden, alebo nie?
 //         if (last_rounds < 0) {
 //             int remain_alive = 0;
 //             for (unsigned i = 0; i < gs.players.size(); i++) {
