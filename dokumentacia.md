@@ -20,8 +20,8 @@ V serveri je tiež zopár zdrojákov, čo vás bude zaujímať.
 - v `main.cpp` sú tiež nejaké pravidlá (ako sa ťahá apod.), ale to je menej
   dôležité.
 
-Kľudne si prečítajte aj ostatné zdrojáky, ja sa len poteším, ale pri kódení
-vášho klienta vám asi nepomôžu.
+Kľudne si prečítajte aj ostatné zdrojáky, ja (a aj Tomi) sa len potešíme, 
+ale pri kódení vášho klienta vám asi nepomôžu.
 
 Ako kódiť klienta
 -----------------
@@ -32,21 +32,24 @@ V koreni proboju spustite `make`, čím všetko skompilujete. (Ak váš klient n
 vnútri `klienti`, nastavte v jeho `Makefile` správny `SERVERDIR` a spustite
 `make` aj v ňom.)
 
-Potom spustite `./server/server zaznamy/01 mapy/simple klienti/vasklient
+Potom spustite `./server/server zaznamy/01 mapy/simple.ppm klienti/vasklient
 klienti/vasklient klienti/hlupy` To spustí hru s troma hráčmi (vaším, druhým
 vaším a hlúpym) a uloží záznam do `zaznamy/01`. Ten si môžete pozrieť tak,
-že najprv zmeníte working directory na `Observer` (príkaz `cd Observer`)
+že najprv zmeníte working directory na `observer` (príkaz `cd observer`)
 a potom zadáte príkaz `java -jar ./dist/Proboj.jar ../zaznamy/01`.
-Alebo zo probojoveho adresara zadate ./server
+Ak vám java nefunguje, môžete použiť alternatívny observer ktorý nieje taký 
+pekný, a nezobrazuje všetko, ale beží v prehliadači. Spusí sa keď otvoríte 
+`observer/observer.html` a zobrazí záznam `zaznamy/01`. ak používate 
+chrome musíte ho spustiť príkazom `google-chrome --allow-file-access-from-files`.
 
-Server sa vášho klienta pýta, čo chce robiť. Pritom ale nečaká na vášho
-klienta --- ak váš klient dlho premýšľa, tak keď konečne spraví ťah,
-server už niekoľko ťahov stihol odsimulovať. Vždy, keď váš klient
-odpovie serveru, mu ten pošle aktuálny stav hry.
+Na začiatku hry dostane váš klient informácie o hre --- terén mapy.
+Tiež má pritom viac času, aby sa mohol inicializovať --- server chvíľu počká, 
+kým začne simulovať.
 
-Na začiatku hry dostane váš klient informácie o hre --- jeho poradové číslo,
-a počiatočný stav hry. Tiež má pritom viac času, aby sa mohol
-inicializovať --- server chvíľu počká, kým začne simulovať.
+Server posiela klientovi každé kolo nový stav hry a čaká na jeho odpoveď. Časový
+limit je dosť veľký, ale ak to bude naozaj dlho trvať, server nečaká. Ak klient
+dlho neodpovedá, alebo program skončí (napríklad chybou), server ho znovu spustí
+a pošle mu úvodné dáta (mapu).
 
 Keď server spustíte u vás, je to len na skúšku. Na hlavnom počítači to beží na
 ostro. Je tam aj webové rozhranie, cez ktoré môžete uploadovať vašich klientov.
@@ -54,47 +57,54 @@ Uploadujú sa zdrojáky a tie sa potom skompilujú (konkrétne sa spustí `make
 naserveri SERVERDIR=/adresar/kde/je/server`).
 
 
-Aky je proboj
+Aký je proboj
 -------------
 
-Ste had, nemáte ale chvost. Váš druhý koniec je v istom zmysle vaše územie.
-Na začiatku začínate vo svojom území, ktoré má nejakú veľkosť (asi 3x3).
+Hra sa volá Mad Scientists.
 
-Vždy, keď váš had vytvorí slučku so svojím územím, sa pridá vnútro slučky
-k vášmu územiu. Pozor --- telo vášho hada sa neráta ako vaše územie.
-Ak do neho narazí hocičo (hlava nejakého hada, aj vašeho), tak váš had
-zomrie. Územie vám ale zostane... kým vám ho ostatní hadi nezoberú...
+Na mape sú labáky, mestá, skaly a voľné políčka.
+Na začiatku hry vlastníte jeden labák, v ktorom môžete vyrábať robotov. Sila 
+robora závisí od toho koľko železa na jeho výrobu použijete --- čím viac tým 
+silnejší. Železo získavate za keždý obsadený labák, mesto a za každých 9 políčok.
+Políčo vlastní ten, koho robot na ňom bol ako posledný. Na každom políčku môže 
+byť len jeden robot.
 
-Ako telo vášho hada sa ráta to, čo trčí von z vášho územia. Dôsledkom
-toho je, že vo vašom území do vášho tela nevie naraziť žiaden iný had
-(lebo žiadne telo nemáte, máte len hlavu).
+Vaším cielom je ovládnuť svet. Problém je, že nie ste jediní kto sa o to snaží.
+Na mape sú labáky ostatných hráčov, ktorí tiež stavajú robotov. Kaď sa dvaja 
+roboti stretnú, silnejší vyhráva a slabší zomiera.
 
-Takisto nechcete, aby váš had nabúral do stien alebo do okraju mapy.
-
-Na mape sa taktiež nachádzajú dva rôzne bonusy. Prvým z nich je
-dvojnásobná rýchlosť na určitú dobu. Druhý spôsobí, že telo vášho
-hada sa okamžite zmení na jeho územie. V momente, keď bonus spapáte,
-ho aj hneď použijete. Bonusy sa objavuju na specialnych polickach,
-v kazdom kole s urcitou pravdepodobnostou.
+Finálne skóre je množstvo železa získané za celú hru.
 
 Ako sa ťahá
 -----------
 
-V každom kole dostanete kompletný stav hry --- teda ako vyzerá celá
-mapa, kde je hlava ktorého hráča, a podobné. Jediné, čo môžete urobiť
-je rozhodnúť, do ktorého smeru natočíte svoju hlavu (ako snake).
-Celé telo sa potom pohne za ňou.
+V každom kole dostanete pohlad na mapu, tak ako ju vidieť z vášho územia.
+To znamená celé vaše územie, a dve políčka okolo. O každom políčku ktoré vidíte,
+viete kto ho vlastní, a aký silný robot tam stojí. Na ostatných políčkach je 
+majiteľ `-1` a robot so silou `0`.
 
-Dávajte si pozor, aby ste sa neotočili o 180 stupňov, keď sa nenachádzate
-vo svojom území --- vtedy pravdepodobne narazíte do svojho vlastného tela.
+Váš ťah je postupnosť príkazov pre jednotlivích robotov, a pre labáky.
+Každému robotovi môžete (nemusíte) povedať smer ktorým sa má pohnúť a každému 
+labáku sil robota ktorého má postaviť. Ak robot alebo labák nedostane príkaz, 
+nič nerobí.
+
+Template klienta je v `C++`, ak chcete použiť iný jazyk, tu budú technické 
+podrobnosti:
 
 Pravidlá hry
 ------------
 
+V každom kole sa dejú jednotlivé udalosti v tomto poradí:
+zomrú roboti ktorí išli proti múru
+pobijú sa roboti ktorí išli proti sebe (silnejší prejde, slabší zomrie)
+postavia sa roboti v labákoch (ak je tam miesto)
+pobijú sa roboti ktorí sú na jednom políčku
+
 Pravidlá sú veľmi jednoduché, ako bolo z časti popísané vyššie. Pre
-konkrétne informácie odporúčam plakať, alebo nahliadnuť do update.cpp
-a poloviť v komentároch.
+konkrétne informácie odporúčam pýtať sa, alebo nahliadnuť do update.cpp
+a poloviť v komentároch --- haha komentáre tam niesu.
 
 Mapy
 ----
 
+Každá mapa má v názve rozmeri a počet hráčov ktorí sa na ňu zmestia.
