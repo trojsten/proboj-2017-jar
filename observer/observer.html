@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="jquery-2.1.4.min.js"></script>
+</head>
+<body>
+
+<canvas id="myCanvas" width="5000" height="5000" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+
+function mapu(){
+for (i = 0; i < vyska; i++) {
+        
+        for (j = 0; j < rozmery[1]; j++){
+            if (mapa[i][j] == "0"){ctx.fillStyle = "#000080";} //volne
+            if (mapa[i][j] == "1"){ctx.fillStyle = "#008000";} //jedlo
+            if (mapa[i][j] == "2"){ctx.fillStyle = "#800000";}
+            if (mapa[i][j] == "3"){ctx.fillStyle = "#808000";} //77
+            if (mapa[i][j] == "4"){ctx.fillStyle = "#800080";}
+            if (mapa[i][j] == "5"){ctx.fillStyle = "#008080";}
+            ctx.fillRect(24*j, 24*i, 24, 24);
+        }
+    }
+}
+
+ function kresli(){
+    kola[kolo]=kola[kolo].split("\n");
+        mapu();
+        kola[kolo].shift();
+        kola[kolo].shift();
+        kola[kolo].shift();
+        console.log(kolo);
+//         console.log(kola[kolo]);
+        for (i = 0; i < vyska; i++) {
+//         console.log(kola[kolo][i]);
+            kola[kolo][i]=kola[kolo][i].split(" ");
+            if(i==0)kola[kolo][i].shift();
+            kola[kolo][i].shift();
+            for (j = 0; j < sirka; j++){
+            x=0;
+                if (parseInt(kola[kolo][i][j*2]) == 0){ctx.fillStyle = "#0000FF";x++;} //volne
+                if (parseInt(kola[kolo][i][j*2]) == 1){ctx.fillStyle = "#00FF00";x++;} //jedlo
+                if (parseInt(kola[kolo][i][j*2]) == 2){ctx.fillStyle = "#FF0000";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 3){ctx.fillStyle = "#FFFF00";x++;} //77
+                if (parseInt(kola[kolo][i][j*2]) == 4){ctx.fillStyle = "#FF00FF";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 5){ctx.fillStyle = "#00FFF";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 6){ctx.fillStyle = "#5050FF";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 7){ctx.fillStyle = "#50FF50";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 8){ctx.fillStyle = "#FF5050";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 9){ctx.fillStyle = "#FFFF50";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 10){ctx.fillStyle = "#FF50FF";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 11){ctx.fillStyle = "#50FFFF";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 12){ctx.fillStyle = "#702020";x++;}
+                if (parseInt(kola[kolo][i][j*2]) == 13){ctx.fillStyle = "#207020";x++;}
+
+                if (parseInt(kola[kolo][i][j*2]) >= 14){ctx.fillStyle = "#00FFFF";x++;}
+                if(x>0)ctx.fillRect(24*j+4, 24*i+4, 16, 16);
+                
+                ctx.fillStyle = "#FFFFFF";
+                ctx.font = "10px Arial";
+                if(kola[kolo][i][1+j*2]!=0)ctx.fillText(kola[kolo][i][1+j*2],24*j+6,24*i+16);
+                
+            }
+        }
+        kolo++;
+    }
+//stiahni podklad
+function stiahni(kol){
+$.get("../zaznamy/01/observation", function(data,status){
+    vsetkospolu=data;
+    kola=vsetkospolu.split("\n\n");
+    mapa=kola[0].split("\n");
+    console.log(mapa);
+    rozmery=mapa[1].split(" ");
+    vyska=rozmery[0];
+    sirka=rozmery[1];
+    console.log(vyska);
+    console.log(sirka);
+    mapa.shift();
+    console.log(mapa);
+    c = document.getElementById("myCanvas");
+    ctx = c.getContext("2d");
+    for (i = 0; i < vyska; i++) {
+        mapa[i]=mapa[i].split(" ");
+        if(i==0){mapa[i].shift();mapa[i].shift();mapa[i].shift();}
+        mapa[i].shift();
+    }
+    mapu();
+    //kresli
+    kolo=1;
+   
+    IntervalId =setInterval(kresli,2000);
+}, "text");
+}
+stiahni(1);
+
+
+</script>
+
+</body>
+</html>
