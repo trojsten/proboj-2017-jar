@@ -1,17 +1,19 @@
 {
-  "mode": "developer",
+  "mode": "observer",
   "resolution": {
     "width": 800,
     "height": 800
   },
   "maximize": true,
   "fullscreen": true,
-  "frameTime": 300,
-  "frameTimeStep": 100,
+  "frameTime": 1500,
+  "frameTimeStep": 1.2,
   "pause": "Ctrl+Space",
   "incSpeed": "Ctrl+Add",
   "decSpeed": "Ctrl+Subtract",
   "useSmoothing": true,
   "maxConsoleMessages": 5000,
-  "maxMessageLength": 20000
+  "maxMessageLength": 20000,
+  "minimap": true,
+  "size": 20
 }
