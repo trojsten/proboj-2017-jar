@@ -20,12 +20,14 @@ while true; do
   mapa=${mapy[$mapa]}
 
   echo "spustam hru na mape $mapa"
-
+  pocet=0
+  pocet=$(echo $mapa | grep -o '[0-9]*\.ppm' | grep -o '^[^.]*')
+  
   buildy=()
   counter=0
   for klient in `shuf -e ${klienti[@]}`; do
     let counter+=1
-    if [ $counter -eq 5 ] 
+    if [ $counter -eq $((pocet+1)) ]
     then
         break;
     fi
@@ -69,6 +71,7 @@ state=playing" > $dir.manifest
     echo "rank=${rank//$'\n'/,}" >> $dir.manifest
     sed -i 's/^state=.*/state=displaying/' $dir.manifest
     # bash hlavnykomp/gen-ranklist > $dir.ranklist
+    ./hlavnykomp/gen-graph $dir
   else
     exitcode=$?
     echo "server spadol s kodom $?"

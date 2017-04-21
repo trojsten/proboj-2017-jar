@@ -17,8 +17,8 @@ using namespace std;
 #include "mapa.h"
 #include "marshal.h"
 
-const int MAX_CITAJ = 17890;
-const int ROUND_TIME = 100;
+const int MAX_CITAJ = 500000;
+const int ROUND_TIME = 10000;
 
 vector<Klient> klienti;
 
@@ -92,7 +92,13 @@ int main(int argc, char *argv[]) {
     fstream observationstream(obsubor.c_str(), fstream::out | fstream::trunc);
     checkOstream(observationstream, "observation");
     
-    random_shuffle(argv + 3, argv + argc);
+    ofstream colorstream((zaznAdr+"/color").c_str());
+    checkOstream(colorstream, zaznAdr+"/color");
+    
+    ofstream graphstream((zaznAdr+"/graph").c_str());
+    checkOstream(graphstream, zaznAdr+"/graph");
+    graphstream<<"kolo ";
+//     random_shuffle(argv + 3, argv + argc);
     set<string> uzMena;
     
     int pocet_hracov = argc - 3;
@@ -111,6 +117,7 @@ int main(int argc, char *argv[]) {
     for (int i = 3; i < argc; i++) {
         string klientAdr(argv[i]);
         string meno = last_valid_substr(klientAdr);
+        graphstream<<meno<<" ";
         // meno klienta je cast za poslednym /, za ktorym nieco je
         
         //ak sa nejaky klient opakuje, odlis ich
@@ -144,7 +151,11 @@ int main(int argc, char *argv[]) {
         }
         
         observationstream << meno << " " << farba << endl;
+        colorstream<<farba<<endl;
+        
     }
+    colorstream.close();
+    graphstream<<endl;
     
     
     // spusti klientov
@@ -161,24 +172,17 @@ int main(int argc, char *argv[]) {
 
     }
     
-    usleep(1000 * 1000ll);
-    
     long long lasttime = gettime();
     
-    int last_rounds = -1;
-    while (last_rounds != 0 && gs.round < MAX_POCET_KOL) {
+    bool iba_jeden=0;
+    while (!iba_jeden && gs.round < MAX_POCET_KOL) {
         cerr << "tah " << gs.round << "\n";
         vector<instruction> commands;
-        bool vsetci_skoncili = 0;
-        vector<bool> skoncil(klienti.size(), 0);
-        while (gettime() - lasttime < ROUND_TIME && !vsetci_skoncili) {
-            usleep(1);
-            // fetchujeme spravy klientov, ale este nesimulujeme kolo
-            vsetci_skoncili=1;
-            for (unsigned k = 0; k < klienti.size(); k++) {
-                if(!skoncil[k]) vsetci_skoncili=0;
-            }
-            for (unsigned k = 0; k < klienti.size(); k++) {
+        for (unsigned k = 0; k < klienti.size(); k++) {
+            bool skoncil=0;
+            int pocet=-1;
+            int nacital=0;
+            while (gettime() - lasttime < ROUND_TIME && !skoncil) {
                 if (!klienti[k].zije()) {
                     klienti[k].restartuj();
                     // klientovi posleme relevantne data
@@ -191,26 +195,31 @@ int main(int argc, char *argv[]) {
                     }
                     continue;
                 }
+                string s=klienti[k].citaj(MAX_CITAJ);
+                if(s=="")continue;
+                else skoncil=1;
+                stringstream riadky(s);
                 
-                stringstream riadky(klienti[k].citaj(MAX_CITAJ));
-                int pocet;
-                if (riadky.eof()) break;
-                riadky >> pocet;
-                for(int i=0; i<pocet+1; i++) {
-                    if (riadky.eof()) {
-                        break;
-                    }
+                if (riadky.eof()){
+                    cerr<<"nic tu nieje"<<endl;
+                    break;
+                }
+                if(pocet == -1){
+                    riadky >> pocet;
+                    cerr<<"pocet "<<pocet<<endl;
+                }
+                for(int i=0; i<pocet; i++) {
                     int cmd;
                     riadky >> cmd;
-                    if (riadky.eof()) break;
+                    nacital++;
                     instruction prikaz;
                     prikaz.klient_id = k;
                     if (cmd == POSUN) {
                         prikaz.pr = POSUN;
-                        int r, s;
+                        int r=0, s=0;
                         riadky >> r >> s;
                         if (riadky.eof()) {
-                            cerr << "Nesprávny príkaz " << k << ": žiadne id robota za prikazom POSUN" << endl;
+                            cerr << "Nesprávny príkaz " << k << ": žiadne suradnice robota za prikazom POSUN"<<r<<" "<<s << endl;
                             continue;
                         }
                         prikaz.riadok = r;
@@ -239,7 +248,7 @@ int main(int argc, char *argv[]) {
                         int r, s;
                         riadky >> r >> s;
                         if (riadky.eof()) {
-                            cerr << "Nesprávny príkaz " << k << ": žiadne id labu za prikazom POSTAV" << endl;
+                            cerr << "Nesprávny príkaz " << k << ": žiadne suradnice labu za prikazom POSTAV" << endl;
                             continue;
                         }
                         prikaz.riadok = r;
@@ -254,8 +263,6 @@ int main(int argc, char *argv[]) {
                         
                     }
                     else if (cmd == KONIEC){
-                        skoncil[k]=1;
-                        cerr << "klient "<<k<<" ukončil vstup"<<endl;
                         break;
                     }
                     else {
@@ -264,7 +271,11 @@ int main(int argc, char *argv[]) {
                     commands.push_back(prikaz);
                 }
             }
-            //break;
+            if(nacital<pocet)cerr<<"nenacital som vsetko od "<<k<<endl;
+        }
+        vector<int> oldskore(gs.skore.size());
+        for (unsigned i = 0; i < klienti.size(); i++) {
+            oldskore[i]=gs.skore[i];
         }
         gs = update_game_state(gm, gs, commands);
         
@@ -293,37 +304,37 @@ int main(int argc, char *argv[]) {
         lasttime = gettime();
         
         observationstream << observer_state_str.str();
+        
+        graphstream << gs.round <<" ";
+        for (unsigned i = 0; i < klienti.size(); i++) {
+            graphstream << /*klienti[i].meno << " " <<*/ gs.skore[i]-oldskore[i] << " ";
+        }
+        graphstream <<endl;
         //TODO ukoncit hru ak zije iba jeden, alebo nie?
-//         if (last_rounds < 0) {
-//             int remain_alive = 0;
-//             for (unsigned i = 0; i < gs.players.size(); i++) {
-//                 if (gs.players[i].alive) remain_alive++;
-//             }
-//             
-//             if (remain_alive <= 1) {
-//                 last_rounds = 8;
-//                 
-//                 for (unsigned i = 0; i < gs.players.size(); i++) {
-//                     if (gs.players[i].alive) {
-//                         gs.players[i].score += 47;
-//                     }
-//                 }
-//             }
-//         } 
-//         else {
-//             last_rounds -= 1;
-//             if (last_rounds <= 0) break;
-//         }
+        vector<int> policok(gs.skore.size(),0);
+        int spolu=0;
+        for(int i=0; i<gs.height; i++){
+            for(int j=0; j<gs.width; j++){
+                if(gs.map[i][j].majitel!=-1){
+                    policok[gs.map[i][j].majitel]++;
+                    spolu++;
+                }
+            }
+        }
+        for(int i=0; i<policok.size(); i++){
+            if(policok[i]==spolu)iba_jeden=1;
+        }
     }
     
     // cleanup
     observationstream.close();
+    graphstream.close();
     zabiKlientov();
     
     ofstream rankstream((zaznAdr+"/rank").c_str());
     checkOstream(rankstream, zaznAdr+"/rank");
     for (unsigned i = 0; i < klienti.size(); i++) {
-        rankstream << klienti[i].meno << " " << gs.skore[i] << "\n";
+        rankstream << /*klienti[i].meno << " " <<*/ gs.skore[i] << "\n";
     }
     rankstream.close();
     

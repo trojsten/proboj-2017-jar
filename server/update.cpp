@@ -248,7 +248,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
          new_gs.zelezo[i]+=labov[i];
          new_gs.zelezo[i]+=miest[i];
          new_gs.zelezo[i]+=policok[i]/9;
-         new_gs.skore[i]+=labov[i]+miest[i]+policok[i]/9;
+         new_gs.skore[i]+=labov[i]+miest[i]+(policok[i]/9);
      }
     cerr<<"hotovo"<<endl;
     return new_gs;

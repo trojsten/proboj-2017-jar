@@ -15,6 +15,7 @@ while true; do
   
   if ./spusti_observer $dir; then
     sed -i 's/^state=displaying$/state=displayed/' $neukazane
+    cp $dir/graph.png zaznamy/${dir#zaznamy/}.png
     tar czf ${dir}.tar.gz -C zaznamy ${dir#zaznamy/}
     rm -r $dir
   else

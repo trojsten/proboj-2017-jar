@@ -66,7 +66,7 @@ def get_ranklist():
         myranks = manifest['rank'].strip(',').split(',')
         for i, build in enumerate(builds):
             client = build.partition('/')[0]
-            ranks[client] = (ranks[client] + int(myranks[i])) * 0.9
+            ranks[client] = (ranks[client] + int(myranks[i])) #* 0.9
     return reversed(sorted(((round(rank, 2), id) for id, rank in ranks.items())))
 
 
@@ -200,9 +200,13 @@ def records():
         begin = time.strftime('%a %H:%M:%S', time.localtime(
             int(manifest['begin'])))
         path = '../../zaznamy/'+id+'.tar.gz'
+        pathg= '../../zaznamy/'+id+'.png'
         link = None
+        linkg = None
         if manifest['state'] == 'displayed' and os.path.isfile(path):
             link = url_for('records_download', id=id+'.tar.gz')
+        if os.path.isfile(pathg):
+            linkg = url_for('graphs_download', id=id+'.png')
         mapa = manifest['map'].replace('mapy/', '')
         state = state_captions[manifest['state']]
         rank = None
@@ -212,7 +216,7 @@ def records():
         if rank:
             rank = zip(clients,rank)
             rank = sorted(rank)
-        data.append(dict(id=id, begin=begin, link=link, map=mapa, state=state,
+        data.append(dict(id=id, begin=begin, link=link, linkg=linkg, map=mapa, state=state,
             rank=rank))
     return render_template('records.html', records=data)
 
@@ -225,6 +229,17 @@ def records_download(id):
     if id not in records: abort(404)
     if records[id]['state'] != 'displayed': abort(403)
     path = '../../zaznamy/'+id+'.tar.gz'
+    if not os.path.isfile(path): abort(404)
+    return send_file(path, as_attachment=True)
+
+@app.route("/graphs/<id>")
+def graphs_download(id):
+    if not re.match(r'^[0-9]+\.png$', id): abort(404)
+    id = id[:-len('.png')]
+    #records = get_records()
+    #if id not in records: abort(404)
+    #if records[id]['state'] != 'displayed': abort(403)
+    path = '../../zaznamy/'+id+'.png'
     if not os.path.isfile(path): abort(404)
     return send_file(path, as_attachment=True)
 

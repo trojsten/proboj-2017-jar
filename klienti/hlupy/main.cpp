@@ -54,17 +54,13 @@ int main() {
 
   unsigned int seed = time(NULL) * getpid();
   srand(seed);
-
   nacitaj(cin, m);
-  uloz(cerr, m);
   fprintf(stderr, "START pid=%d, seed=%u\n", getpid(), seed);
   inicializuj();
 
   while (cin.good()) {
     nacitaj(cin, stav);
-    uloz(cerr, zistiTah());
     uloz(cout, zistiTah());
-    cout << "2" << endl<<flush;   // 2 a flush = koniec odpovede
   }
 
   return 0;

@@ -2,6 +2,9 @@
 
 ## Co treba na rozbehanie proboja?
 
+Nasledujúci návod slúži na spustenie hlavného kompu, ak chcete len kódiť 
+klienta, prečítajte si dokumentáciu.
+
 Odporucame rozbehavat proboj na linuxe. Na windowse je to bolestive
 a nie zdokumentovane, ale ak to date tak vas to urcite posilni...
 

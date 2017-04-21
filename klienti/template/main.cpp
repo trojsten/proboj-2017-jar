@@ -43,7 +43,6 @@ int main() {
     while (cin.good()) {
         nacitaj(cin, stav);
         uloz(cout, zistiTah());
-        cout << "2" << endl;   // 2 a flush = koniec odpovede
     }
 
     return 0;

@@ -36,7 +36,7 @@ Potom spustite `./server/server zaznamy/01 mapy/simple.ppm klienti/vasklient
 klienti/vasklient klienti/hlupy` To spustí hru s troma hráčmi (vaším, druhým
 vaším a hlúpym) a uloží záznam do `zaznamy/01`. Ten si môžete pozrieť tak,
 že najprv zmeníte working directory na `observer` (príkaz `cd observer`)
-a potom zadáte príkaz `java -jar ./dist/Proboj.jar ../zaznamy/01`.
+a potom zadáte príkaz `java -jar ./JavaFXApp.jar ../zaznamy/01`.
 Ak vám java nefunguje, môžete použiť alternatívny observer ktorý nieje taký 
 pekný, a nezobrazuje všetko, ale beží v prehliadači. Spusí sa keď otvoríte 
 `observer/observer.html` a zobrazí záznam `zaznamy/01`. ak používate 
