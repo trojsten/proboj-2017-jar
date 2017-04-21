@@ -13,8 +13,9 @@ je potrebna java 8.
 
 `sudo apt-get install oracle-java8-installer`
 
-Na niektore scripty je potrebny python2, a kadejake balicky v nom
-(flask, ...)
+Na web je potrebny python2, a kadejake balicky v nom
+(flask, markdown) a na grafy treba gnuplot a python3
+ostatné scripty používajú bash.
 
 ## Ako rozbehat proboj?
 
