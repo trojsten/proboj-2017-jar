@@ -7,6 +7,10 @@ using namespace std;
 
 #define chyba(...) (fprintf(stderr, __VA_ARGS__), false)
 
+bool je_policko(int vyska, int sirka, int riadok, int stlpec){
+    return (riadok >= 0 && stlpec >= 0 && riadok < vyska && stlpec < sirka);
+}
+
 
 masked_game_state::masked_game_state(game_state gs, int klient) {
     zelezo = gs.zelezo[klient];
@@ -26,17 +30,32 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
                                         klient
                                     :gs.map[i][j].majitel
                                 );
-
-            if((mapa[i][j].majitel!=0)
-                    &&((i>0)?(gs.map[i-1][j].majitel!=klient):(1))
-                    &&((j>0)?gs.map[i][j-1].majitel!=klient:1)
-                    &&((i<vyska-1)?(gs.map[i+1][j].majitel!=klient):1)
-                    &&((j<sirka-1)?(gs.map[i][j+1].majitel!=klient):1)){
-                mapa[i][j].majitel = -1;
-                mapa[i][j].sila_robota = -1;
+        }
+    }
+    
+    for (int i = 0; i < vyska; i++) {
+        for (int j = 0; j < sirka; j++) {
+            if(mapa[i][j].majitel!=0){
+                bool vidi=0;
+                for (int v=0; v<=2; v++){
+                    for (int d=0; d<=v; d++){
+                        if(je_policko(vyska, sirka, i+(v-d), j+d) && mapa[i+(v-d)][j+d].majitel==0)vidi=1;
+                        if(je_policko(vyska, sirka, i-(v-d), j+d) && mapa[i-(v-d)][j+d].majitel==0)vidi=1;
+                        if(je_policko(vyska, sirka, i+(v-d), j-d) && mapa[i+(v-d)][j-d].majitel==0)vidi=1;
+                        if(je_policko(vyska, sirka, i-(v-d), j-d) && mapa[i-(v-d)][j-d].majitel==0)vidi=1;
+                    }
+                }
+            
+                if(!vidi){
+                    mapa[i][j].majitel = -1;
+                    mapa[i][j].sila_robota = -1;
+                }
             }
         }
     }
+    
+    
+    
 }
 
 game_state::game_state(int num_players, mapa gm) {
