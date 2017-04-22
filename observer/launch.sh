@@ -1,0 +1,1 @@
+java -jar out/artifacts/JavaFXApp.jar out/zaznamy/000002

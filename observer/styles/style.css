@@ -15,3 +15,8 @@
 #table .table-row-cell:empty .table-cell {
     -fx-border-width: 0px;
 }
+
+#minimapWrapper {
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}

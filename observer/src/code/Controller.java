@@ -2,6 +2,7 @@ package code;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -21,6 +22,13 @@ public class Controller {
     public GridPane gridPane;
     public Pane pane;
     public ScrollPane scrollPaneConsoleArea;
+    public Canvas minimap;
+    public Pane minimapWrapper;
+    private Settings settings;
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
 
     public void commandLineTyped(KeyEvent event) {
         //we are on FX application thread, no need to call Platform.runLater
@@ -42,7 +50,7 @@ public class Controller {
 
     public void addTextToConsole(Node t){
         Platform.runLater(()->{
-            while (consoleArea.getChildren().size() > 1000)consoleArea.getChildren().remove(0);
+            while (consoleArea.getChildren().size() > settings.getMaxConsoleMessages())consoleArea.getChildren().remove(0);
             consoleArea.getChildren().add(t);
         });
     }
@@ -58,7 +66,7 @@ public class Controller {
     }
 
     public void initialize() {
-        consoleArea.setCache(true);
+        if(consoleArea != null) consoleArea.setCache(true);
     }
 }
 

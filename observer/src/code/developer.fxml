@@ -11,18 +11,23 @@
       <RowConstraints vgrow="ALWAYS" />
    </rowConstraints>
    <children>
-      <SplitPane dividerPositions="0.5" prefHeight="832.0" prefWidth="967.0">
+      <SplitPane dividerPositions="0.7" prefHeight="832.0" prefWidth="967.0">
         <items>
-          <SplitPane dividerPositions="0.7" minHeight="0.0" minWidth="0.0" orientation="VERTICAL">
-             <items>
-                 <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="260.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-                    <content>
-                       <Pane fx:id="pane" />
-                    </content>
-                 </ScrollPane>
-                 <TableView fx:id="table" prefHeight="250.0" prefWidth="469.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+            <SplitPane dividerPositions="0.9" minHeight="0.0" minWidth="0.0" orientation="VERTICAL">
+              <items>
+                <AnchorPane>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                       <AnchorPane fx:id="canvasWrapper">
+                         <Pane fx:id="pane" />
+                       </AnchorPane>
+                     </content>
+                   </ScrollPane>
+                  <Pane fx:id="minimapWrapper" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0"/>
+                </AnchorPane>
+               <TableView fx:id="table" prefHeight="250.0" prefWidth="469.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" minHeight="0">
                    <columns>
-                     <TableColumn minWidth="100.0" text="Meno" />
+                     <TableColumn minWidth="200.0" text="Meno" />
                      <TableColumn minWidth="100.0" text="Body" />
                    </columns>
                     <columnResizePolicy>

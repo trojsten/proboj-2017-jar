@@ -1,13 +1,14 @@
 package code;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -32,7 +33,7 @@ public class ObserverGraphics {
   private Pane pane;
   private ObserverObjects observerObjects;
   private Color color;
-  private ArrayList<Node> children = new ArrayList<>();
+  private Vector<Node> children = new Vector<>();
   private HashMap<String, Object> saved = new HashMap<>();
 
   ObserverGraphics(Controller controller) {
@@ -52,6 +53,14 @@ public class ObserverGraphics {
     pane.setMinSize(width, height);
   }
 
+  public double getWidth() {
+    return pane.getMinWidth();
+  }
+
+  public double getHeight() {
+    return pane.getMinHeight();
+  }
+
   public Node getObserverObject(String key) {
     return observerObjects.getAcessible(key);
   }
@@ -60,12 +69,8 @@ public class ObserverGraphics {
     if (key != null) {
       observerObjects.addAccessible(key, rect);
     }
-    Platform.runLater(() -> {
-      if (c != null) {
-        rect.setFill(c);
-      }
-      children.add(rect);
-    });
+    rect.setFill(c);
+    children.add(rect);
   }
 
   public void fillRect(Rectangle rect, Color c) {
@@ -128,14 +133,17 @@ public class ObserverGraphics {
   }
 
   public void clear() {
-    dispatch(() -> pane.getChildren().clear());
+    dispatch(() -> {
+      pane.getChildren().clear();
+    });
   }
 
   public void repaint() {
     dispatch(() -> {
-      pane.getChildren().clear();
-      controller.pane.getChildren().addAll(children);
-      children.clear();
+      synchronized (children) {
+        pane.getChildren().setAll(children);
+        children.clear();
+      }
     });
   }
 
@@ -149,5 +157,17 @@ public class ObserverGraphics {
 
   public void drawImage(Image image, double x, double y) {
     drawImage(image, new Rectangle(x, y, image.getWidth(), image.getHeight()), null);
+  }
+
+  public Image getSnapshot() {
+    WritableImage img = new WritableImage((int)getWidth(), (int)getHeight());
+    dispatch(() -> {
+      synchronized (children) {
+        pane.getChildren().setAll(children);
+        children.clear();
+        pane.snapshot(null, img);
+      }
+    });
+    return img;
   }
 }

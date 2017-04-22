@@ -11,125 +11,155 @@ import java.awt.*;
  * we pass default values here (as option if no settings are provided).
  */
 public class Settings {
-    public static final String DEV_MODE = "developer";
-    public static final String OBS_MODE = "observer";
-    public static final String BOT_LOG_DELIMETER = "---";
-    private String obsMode = DEV_MODE;
-    private String obsDir = null;
-    private Dimension resolution = new Dimension(800, 600);
-    private int frameTime = 500;
-    private boolean fullscreen = false;
-    private boolean windowMaximized = false;
-    private int frameTimeStep = 50;
-    private KeyCodeCombination pauseCombination = (KeyCodeCombination) KeyCodeCombination.keyCombination("Ctrl+Space");
-    private KeyCodeCombination incSpeedCombination = (KeyCodeCombination) KeyCodeCombination.keyCombination("Ctrl+Add");
-    private KeyCodeCombination decSpeedCombination = (KeyCodeCombination) KeyCodeCombination.keyCombination("Ctrl+Subtract");
-    private boolean useSmoothing = true;
-    private int maxConsoleMessages = 1500;
-    private int maxMessageLength = 2000;
+  //TODO create System settings (unchangable)
+  public static final String DEV_MODE = "developer";
+  public static final String OBS_MODE = "observer";
+  public static final String BOT_LOG_DELIMETER = "---";
+  private String obsMode = DEV_MODE;
+  private String obsDir = null;
+  private Dimension resolution = new Dimension(800, 600);
+  private int frameTime = 500;
+  private boolean fullscreen = false;
+  private boolean windowMaximized = false;
+  private double frameStepRate = 1.2;
+  private KeyCodeCombination pauseCombination = (KeyCodeCombination) KeyCodeCombination
+      .keyCombination("Ctrl+Space");
+  private KeyCodeCombination incSpeedCombination = (KeyCodeCombination) KeyCodeCombination
+      .keyCombination("Ctrl+Add");
+  private KeyCodeCombination decSpeedCombination = (KeyCodeCombination) KeyCodeCombination
+      .keyCombination("Ctrl+Subtract");
+  private boolean useSmoothing = true;
+  private int maxConsoleMessages = 1500;
+  private String title = "Observer";
+  private int maxMessageLength = 2000;
+  private boolean minimapEnabled = true;
+  private int squareSize = 20;
 
-    public boolean isUseSmoothing() {
-        return useSmoothing;
-    }
+  public int getSquareSize() {
+    return squareSize;
+  }
 
-    public void setUseSmoothing(boolean useSmoothing) {
-        this.useSmoothing = useSmoothing;
-    }
+  public void setSquareSize(int squareSize) {
+    this.squareSize = squareSize;
+  }
 
-    public int getMaxConsoleMessages() {
-        return maxConsoleMessages;
-    }
+  public boolean isMinimapEnabled() {
+    return minimapEnabled;
+  }
 
-    public void setMaxConsoleMessages(int maxConsoleMessages) {
-        this.maxConsoleMessages = maxConsoleMessages;
-    }
+  public void setMinimapEnabled(boolean minimapEnabled) {
+    this.minimapEnabled = minimapEnabled;
+  }
 
-    public int getMaxMessageLength() {
-        return maxMessageLength;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setMaxMessageLength(int maxMessageLength) {
-        this.maxMessageLength = maxMessageLength;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public KeyCodeCombination getPauseCombination() {
-        return pauseCombination;
-    }
+  public void setUseSmoothing(boolean useSmoothing) {
+    this.useSmoothing = useSmoothing;
+  }
 
-    public void setPauseCombination(String pauseCombination) {
-        this.pauseCombination = (KeyCodeCombination) KeyCodeCombination.keyCombination(pauseCombination);
-    }
+  public int getMaxConsoleMessages() {
+    return maxConsoleMessages;
+  }
 
-    public KeyCodeCombination getIncSpeedCombination() {
-        return incSpeedCombination;
-    }
+  public void setMaxConsoleMessages(int maxConsoleMessages) {
+    this.maxConsoleMessages = maxConsoleMessages;
+  }
 
-    public void setIncSpeedCombination(String incSpeedCombination) {
-        this.incSpeedCombination = (KeyCodeCombination) KeyCodeCombination.keyCombination(incSpeedCombination);
-    }
+  public int getMaxMessageLength() {
+    return maxMessageLength;
+  }
 
-    public KeyCodeCombination getDecSpeedCombination() {
-        return decSpeedCombination;
-    }
+  public void setMaxMessageLength(int maxMessageLength) {
+    this.maxMessageLength = maxMessageLength;
+  }
 
-    public void setDecSpeedCombination(String decSpeedCombination) {
-        this.decSpeedCombination = (KeyCodeCombination) KeyCodeCombination.keyCombination(decSpeedCombination);
-    }
+  public KeyCodeCombination getPauseCombination() {
+    return pauseCombination;
+  }
 
-    public void setFrameTimeStep(int frameTimeStep) {
-        this.frameTimeStep = frameTimeStep;
-    }
+  public void setPauseCombination(String pauseCombination) {
+    this.pauseCombination = (KeyCodeCombination) KeyCodeCombination
+        .keyCombination(pauseCombination);
+  }
+
+  public KeyCodeCombination getIncSpeedCombination() {
+    return incSpeedCombination;
+  }
+
+  public void setIncSpeedCombination(String incSpeedCombination) {
+    this.incSpeedCombination = (KeyCodeCombination) KeyCodeCombination
+        .keyCombination(incSpeedCombination);
+  }
+
+  public KeyCodeCombination getDecSpeedCombination() {
+    return decSpeedCombination;
+  }
+
+  public void setDecSpeedCombination(String decSpeedCombination) {
+    this.decSpeedCombination = (KeyCodeCombination) KeyCodeCombination
+        .keyCombination(decSpeedCombination);
+  }
+
+  public void setFrameStepRate(double frameStepRate) {
+    this.frameStepRate = frameStepRate;
+  }
 
 
-    public void setMode(String mode) {
-        this.obsMode = mode;
-    }
+  public void setMode(String mode) {
+    this.obsMode = mode;
+  }
 
-    public void setObsFileDir(String obsFileDir) {
-        this.obsDir = obsFileDir;
-    }
+  public void setObsFileDir(String obsFileDir) {
+    this.obsDir = obsFileDir;
+  }
 
-    public boolean inDevMode() {
-        return obsMode.equals(DEV_MODE);
-    }
+  public boolean inDevMode() {
+    return obsMode.equals(DEV_MODE);
+  }
 
-    public String getObsDir() {
-        return obsDir;
-    }
+  public String getObsDir() {
+    return obsDir;
+  }
 
-    public void setResolution(Dimension resolution) {
-        this.resolution = resolution;
-    }
+  public void setResolution(Dimension resolution) {
+    this.resolution = resolution;
+  }
 
-    public void setFrameTime(Integer frameTime) {
-        this.frameTime = frameTime;
-    }
+  public void setFrameTime(Integer frameTime) {
+    this.frameTime = Math.min(Math.max(frameTime, 10), 5000);
+  }
 
-    public void setFullscreen(Boolean fullscreen) {
-        this.fullscreen = fullscreen;
-    }
+  public void setFullscreen(Boolean fullscreen) {
+    this.fullscreen = fullscreen;
+  }
 
-    public void setMaximized(boolean maximized) {
-        this.windowMaximized = maximized;
-    }
+  public void setMaximized(boolean maximized) {
+    this.windowMaximized = maximized;
+  }
 
-    public boolean isWindowMaximized() {
-        return windowMaximized;
-    }
+  public boolean isWindowMaximized() {
+    return windowMaximized;
+  }
 
-    public int getWindowWidth() {
-        return (int) resolution.getWidth();
-    }
+  public int getWindowWidth() {
+    return (int) resolution.getWidth();
+  }
 
-    public int getWindowHeight() {
-        return (int) resolution.getHeight();
-    }
+  public int getWindowHeight() {
+    return (int) resolution.getHeight();
+  }
 
-    public int getFrameTime() {
-        return frameTime;
-    }
+  public int getFrameTime() {
+    return frameTime;
+  }
 
-    public int getFrameTimeStep() {
-        return frameTimeStep;
-    }
+  public double getFrameStepRate() {
+    return frameStepRate;
+  }
 }

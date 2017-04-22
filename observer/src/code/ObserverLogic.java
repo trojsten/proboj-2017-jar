@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,13 +20,18 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.ConsoleTextCreator;
 
@@ -35,6 +40,7 @@ import util.ConsoleTextCreator;
  */
 public class ObserverLogic implements Runnable {
 
+  private final Stage root;
   private final Parent sceneRoot;
   ObserverGraphics obs;
   Controller controller;
@@ -61,9 +67,9 @@ public class ObserverLogic implements Runnable {
   private boolean gamePaused = false;
 
 
-  ObserverLogic(Parent sceneRoot, ObserverGraphics graphics, Controller controller,
-      Settings settings) {
-    this.sceneRoot = sceneRoot;
+  ObserverLogic(Stage root, ObserverGraphics graphics, Controller controller, Settings settings) {
+    this.root = root;
+    this.sceneRoot = root.getScene().getRoot();
     obs = graphics;
     this.controller = controller;
     this.settings = settings;
@@ -84,6 +90,7 @@ public class ObserverLogic implements Runnable {
     try {
       initialize();
       while (gameRunning) {
+        obs.dispatch(() -> root.setTitle(String.format("%s [Kolo %d]", settings.getTitle(), roundNumber)));
         while (gamePaused) {
           pauseLock.lock();
           while (gamePaused) {
@@ -96,28 +103,48 @@ public class ObserverLogic implements Runnable {
         createTimeline();
         long t = System.currentTimeMillis();
         process();
-        System.out.println("PROCCESS" + (System.currentTimeMillis() - t));
-        t = System.currentTimeMillis();
+        //System.out.println("PROCCESS: " + (System.currentTimeMillis() - t));
+        //t = System.currentTimeMillis();
         obs.repaint();
-        System.out.println("REPAINT" + (System.currentTimeMillis() - t));
+        //System.out.println("REPAINT: " + (System.currentTimeMillis() - t));
         playAnimations();
 
         long renderTime = (System.currentTimeMillis() - beforeRender);
         long sleepTime = settings.getFrameTime() - renderTime;
-        System.out.println(sleepTime);
+        // System.out.println(sleepTime);
         if (sleepTime < 0) {
           System.err.println("Warning: Sleep time negative!");
         }
-        System.out.println("SPIM: "+ Math.max(sleepTime, 50));
+        //System.out.println("SPIM: "+ Math.max(sleepTime, 50));
         Thread.sleep(Math.max(sleepTime, 50));
         roundNumber++;
         consoleLock.lock();
         roundFinished.signal();
         consoleLock.unlock();
       }
+      obs.dispatch(() -> root.setTitle(String.format("%s [Koniec]", settings.getTitle())));
+      gameFinished();
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private void gameFinished() {
+    // otvor graf a zomri po 5 sec
+    Image graph = null;
+    try {
+      graph = new Image(Paths.get(settings.getObsDir(), "graph.png").toUri().toURL().toString());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    obs.drawImage(graph, new Rectangle(0,0), null);
+    obs.repaint();
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.exit(0);
   }
 
   private void createTimeline() throws InterruptedException {
@@ -147,15 +174,18 @@ public class ObserverLogic implements Runnable {
     timeline.setOnFinished(e -> {
       if (animationLock != null) {
         animationLock.lock();
-        if (timer != null) timer.stop();
+        if (timer != null) {
+          timer.stop();
+        }
         //set fraction to 1 as it is the last val
         frac.set(1);
-        for (CanvasAnimation a : animations) {
-          // TODO this may not be in an runLater method
-          Platform.runLater(() -> {
-            a.animate();
-          });
-        }
+        Platform.runLater(() -> {
+          synchronized (animations) {
+            for (CanvasAnimation a : animations) {
+              a.animate();
+            }
+          }
+        });
         timelineFinished.signal();
         animationLock.unlock();
       }
@@ -182,16 +212,16 @@ public class ObserverLogic implements Runnable {
   /**
    * This is the method where update the game, and tell program what to paint
    */
-  private final int TRAVA = 0, KAMEN = 1, VODA = 2, LAB = 3, LAB_SPAWN = 4, MESTO = 5;
-  private final int SIZE = 80;
+  private final int TRAVA = 0, KAMEN = 1, VODA = 2, LAB = 3, LAB_SPAWN = 5, MESTO = 4;
+  private int SIZE; // initialized in header
 
   private void process() throws Exception {
     if (obsReader.hasNextInt() == false) {
-      setGameFinished();
+      sendGameFinishedRequest();
       return;
     }
     int zbyt;
-    // round, dimensions, probably num of players?
+    // round, dimensions, num players
     zbyt = obsReader.nextInt();
     zbyt = obsReader.nextInt();
     zbyt = obsReader.nextInt();
@@ -199,49 +229,40 @@ public class ObserverLogic implements Runnable {
     for (int i = 0; i < totalPlayers; i++) {
       players[i].setIron(obsReader.nextInt());
     }
-    // wtf is this number?
+    //num players
+    zbyt = obsReader.nextInt();
+    for (int i = 0; i < totalPlayers; i++) {
+      players[i].setScore(obsReader.nextInt());
+    }
+
+    obs.drawImage((Image) obs.fromSaved("terrain"), new Rectangle(0,0), null);
+    // rows
     zbyt = obsReader.nextInt();
     for (int i = 0; i < rows; i++) {
-      // this number?
+      // cols
       zbyt = obsReader.nextInt();
       for (int j = 0; j < cols; j++) {
-        int type = obsReader.nextInt();
         int owner = obsReader.nextInt();
         int robot = obsReader.nextInt();
-        switch (type) {
-          case TRAVA:
-            obs.drawImage((Image) obs.fromSaved("grass"), i*SIZE, j*SIZE);
-            break;
-          case KAMEN:
-            obs.drawImage((Image) obs.fromSaved("rock"), i*SIZE, j*SIZE);
-            break;
-          case VODA:
-            obs.drawImage((Image) obs.fromSaved("sea"), i*SIZE, j*SIZE);
-            break;
-          case LAB:
-            obs.drawImage((Image) obs.fromSaved("ikonka"), i*SIZE, j*SIZE);
-            break;
-          case LAB_SPAWN:
-            obs.drawImage((Image) obs.fromSaved("ikonka"), i*SIZE, j*SIZE);
-            break;
-          case MESTO:
-            obs.drawImage((Image) obs.fromSaved("ikonka"), i*SIZE, j*SIZE);
-            break;
-        }
         if (owner != -1) {
           Color c = players[owner].getColor();
-          Color fill = new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.6);
-          obs.fillRect(new Rectangle(i*SIZE, j*SIZE, SIZE, SIZE), fill);
+          Color fill = new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.7);
+          obs.fillRect(new Rectangle(i * SIZE, j * SIZE, SIZE, SIZE), fill);
         }
         if (robot != 0) {
           // smaller radius is better
-          obs.fillShape(new Circle(i*SIZE + SIZE / 2, j*SIZE+ SIZE / 2, SIZE / 4), Color.BLACK, null);
-          int w = SIZE / 4;
-          obs.drawBoundedText(String.valueOf(robot), new Rectangle(i*SIZE, j*SIZE, 2*w, 2*w), Color.RED);
+          Circle sh = new Circle(i * SIZE + SIZE / 2, j * SIZE + SIZE / 2, SIZE / 4);
+          obs.fillShape(sh, Color.BLACK, null);
+          /*double X = sh.getCenterX();
+          animations.add(() -> {
+            sh.setCenterX(X - SIZE*frac.getValue());
+          });*/
+          int w = SIZE / 3;
+          obs.drawBoundedText(String.valueOf(robot),
+              new Rectangle(i * SIZE, j * SIZE, 2 * w, 2 * w), Color.RED);
         }
       }
     }
-
   }
 
   private void initialize() throws Exception {
@@ -254,30 +275,67 @@ public class ObserverLogic implements Runnable {
     //open reader
     obsReader = new Scanner(new BufferedReader(
         new FileReader((Paths.get(settings.getObsDir(), "observation").toFile()))));
+    // TODO remove
+    SIZE = settings.getSquareSize();
+    initializeTextures();
     readHeader();
     initializeTable();
-    initializeTextures();
+    if (settings.isMinimapEnabled()) {
+      initializeMinimap();
+    }
     if (settings.inDevMode()) {
       initializeBotLogs();
     }
     addKeyEventListeners(sceneRoot);
   }
 
+  private void initializeMinimap() {
+    new Thread(() -> {
+      // TODO use settings
+      double maxV = Math.max(obs.getWidth(), obs.getHeight());
+      double scale = 250 /  maxV;
+      double W = obs.getWidth() * scale, H = obs.getHeight() * scale;
+      controller.minimap = new Canvas(W, H);
+      obs.dispatch(() -> {
+        controller.minimapWrapper.getChildren().add(controller.minimap);
+      });
+
+      while (true) {
+        obs.dispatch(() -> {
+          Image im = controller.pane.snapshot(null, null);
+          PixelReader reader = im.getPixelReader();
+          int w = Math.max((int) obs.getWidth(), 1);
+          int h = Math.max((int) obs.getHeight(), 1);
+          WritableImage newImage = new WritableImage(reader, 0, 0, w, h);
+          GraphicsContext g = controller.minimap.getGraphicsContext2D();
+          g.clearRect(0,0, W, H);
+          g.drawImage(newImage, 0, 0, W, H);
+        });
+        // TODO sync with fps
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+  }).start();
+}
+
   private void initializeTextures() {
     obs.save(obs.loadImage("res/grass.jpg", SIZE, SIZE), "grass");
     obs.save(obs.loadImage("res/rock.jpg", SIZE, SIZE), "rock");
-    obs.save(obs.loadImage("res/sea.jpg", SIZE, SIZE), "sea");
-    obs.save(obs.loadImage("res/ikonka.png", SIZE, SIZE), "ikonka");
-    obs.save(obs.loadImage("res/house.png", SIZE, SIZE), "house");
+    obs.save(obs.loadImage("res/sea2.jpg", SIZE, SIZE), "sea");
+    obs.save(obs.loadImage("res/gold.png", SIZE, SIZE), "ironMine");
+    obs.save(obs.loadImage("res/city.png", SIZE, SIZE), "spawn");
   }
 
   private void addKeyEventListeners(Parent node) {
     // it's enough to set event only here, no need for recursion
     node.setOnKeyPressed(event -> {
       if (settings.getIncSpeedCombination().match(event)) {
-        settings.setFrameTime(settings.getFrameTime() - settings.getFrameTimeStep());
+        settings.setFrameTime((int) (settings.getFrameTime() / settings.getFrameStepRate()));
       } else if (settings.getDecSpeedCombination().match(event)) {
-        settings.setFrameTime(settings.getFrameTime() + settings.getFrameTimeStep());
+        settings.setFrameTime((int) (settings.getFrameTime() * settings.getFrameStepRate()));
       } else if (settings.getPauseCombination().match(event)) {
         gamePaused = !gamePaused;
         if (gamePaused) {
@@ -297,7 +355,40 @@ public class ObserverLogic implements Runnable {
    */
   private void readHeader() throws Exception {
     totalPlayers = obsReader.nextInt();
+    rows = obsReader.nextInt();
+    cols = obsReader.nextInt();
     players = new Player[totalPlayers];
+    // this number?
+    int zbyt = obsReader.nextInt();
+    for (int i = 0; i < rows; i++) {
+      // this number?
+      zbyt = obsReader.nextInt();
+      for (int j = 0; j < cols; j++) {
+        int type = obsReader.nextInt();
+        switch (type) {
+          case TRAVA:
+            obs.drawImage((Image) obs.fromSaved("grass"), i * SIZE, j * SIZE);
+            break;
+          case KAMEN:
+            obs.drawImage((Image) obs.fromSaved("rock"), i * SIZE, j * SIZE);
+            break;
+          case VODA:
+            obs.drawImage((Image) obs.fromSaved("sea"), i * SIZE, j * SIZE);
+            break;
+          case LAB:
+          case LAB_SPAWN:
+            obs.drawImage((Image) obs.fromSaved("grass"), i * SIZE, j * SIZE);
+            obs.drawImage((Image) obs.fromSaved("spawn"), i * SIZE, j * SIZE);
+            break;
+          case MESTO:
+            obs.drawImage((Image) obs.fromSaved("grass"), i * SIZE, j * SIZE);
+            obs.drawImage((Image) obs.fromSaved("ironMine"), i * SIZE, j * SIZE);
+            break;
+          default:
+            System.out.println("ERROR: NEPOZNANE POLICKO" + type);
+        }
+      }
+    }
     for (int i = 0; i < totalPlayers; i++) {
       String name = obsReader.next();
       double r, g, b, a;
@@ -307,9 +398,8 @@ public class ObserverLogic implements Runnable {
       a = obsReader.nextDouble();
       players[i] = new Player(name, new Color(r, g, b, a), 0);
     }
-    rows = obsReader.nextInt();
-    cols = obsReader.nextInt();
     obs.setCanvasSize(rows * SIZE, cols * SIZE);
+    obs.save(obs.getSnapshot(), "terrain");
     System.err.println(rows + " " + cols);
   }
 
@@ -317,8 +407,7 @@ public class ObserverLogic implements Runnable {
     TableView table = controller.table;
     TableColumn name = (TableColumn) table.getColumns().get(0);
     TableColumn score = (TableColumn) table.getColumns().get(1);
-    ObservableList<Player> data = FXCollections.observableArrayList();
-    Collections.addAll(data, players);
+    ObservableList<Player> data = FXCollections.observableArrayList(players);
     Platform.runLater(() -> {
       name.setCellValueFactory(new PropertyValueFactory<Player, String>("name"));
       score.setCellValueFactory(new PropertyValueFactory<Player, String>("score"));
@@ -394,7 +483,7 @@ public class ObserverLogic implements Runnable {
     return true;
   }
 
-  private void setGameFinished() {
+  private void sendGameFinishedRequest() {
     gameRunning = false;
   }
 }
