@@ -6,7 +6,7 @@ import os
 fo = open(sys.argv[1]+"/color", "r")
 lines_list = fo.readlines()
 fo.close()
-s='set term png enhanced\n'\
+s='set term png enhanced size 2*640,480\n'\
 'set output "graph.png"\n'\
 'set key opaque\n'\
 'scale(x)=x*255\n'\

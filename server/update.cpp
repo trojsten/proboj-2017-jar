@@ -235,20 +235,29 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
     vector<int> policok(gs.zelezo.size(),0);
     vector<int> labov(gs.zelezo.size(),0);
     vector<int> miest(gs.zelezo.size(),0);
+    int policok_spolu=0;
     for(int i=0; i<gs.height; i++){
         for(int j=0; j<gs.width; j++){
              new_gs.map[i][j].majitel = map[i][j].bol_tu.majitel;
              new_gs.map[i][j].sila_robota = map[i][j].bol_tu.sila;
              if(map[i][j].typ == MESTO && map[i][j].bol_tu.majitel != -1)miest[map[i][j].bol_tu.majitel]++;
              if(map[i][j].typ == LAB && map[i][j].bol_tu.majitel != -1)labov[map[i][j].bol_tu.majitel]++;
-             if(map[i][j].bol_tu.majitel != -1)policok[map[i][j].bol_tu.majitel]++;
+             if(map[i][j].bol_tu.majitel != -1){
+                 policok[map[i][j].bol_tu.majitel]++;
+                 policok_spolu++;
+             }
          }
      }
      for(int i=0; i<new_gs.zelezo.size(); i++){
+         
          new_gs.zelezo[i]+=labov[i];
          new_gs.zelezo[i]+=miest[i];
          new_gs.zelezo[i]+=policok[i]/9;
-         new_gs.skore[i]+=labov[i]+miest[i]+(policok[i]/9);
+         if(policok[i]==policok_spolu){
+             new_gs.skore[i]+=(labov[i]+miest[i]+(policok[i]/9))*(MAX_POCET_KOL-new_gs.round);
+             new_gs.round=MAX_POCET_KOL;
+         }
+         else new_gs.skore[i]+=labov[i]+miest[i]+(policok[i]/9);
      }
     cerr<<"hotovo"<<endl;
     return new_gs;

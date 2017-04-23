@@ -9,9 +9,12 @@ Odporucame rozbehavat proboj na linuxe. Na windowse je to bolestive
 a nie zdokumentovane, ale ak to date tak vas to urcite posilni...
 
 Na rozbehanie grafickeho rozhrania na pozeranie zapasov ("observer")
-je potrebna java 8.
+je potrebna Oracle java 8.
 
-`sudo apt-get install oracle-java8-installer`
+`sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer` 
+(testované na Ubuntu 16.04)
 
 Na web je potrebny python2, a kadejake balicky v nom
 (flask, markdown) a na grafy treba gnuplot a python3

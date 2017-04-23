@@ -180,8 +180,8 @@ int main(int argc, char *argv[]) {
         vector<instruction> commands;
         for (unsigned k = 0; k < klienti.size(); k++) {
             bool skoncil=0;
-            int pocet=-1;
             int nacital=0;
+            int pocet;
             while (gettime() - lasttime < ROUND_TIME && !skoncil) {
                 if (!klienti[k].zije()) {
                     klienti[k].restartuj();
@@ -204,10 +204,8 @@ int main(int argc, char *argv[]) {
                     cerr<<"nic tu nieje"<<endl;
                     break;
                 }
-                if(pocet == -1){
-                    riadky >> pocet;
-                    cerr<<"pocet "<<pocet<<endl;
-                }
+                riadky >> pocet;
+                cerr<<"pocet "<<pocet<<endl;
                 for(int i=0; i<pocet; i++) {
                     int cmd;
                     riadky >> cmd;
@@ -274,6 +272,7 @@ int main(int argc, char *argv[]) {
             if(nacital<pocet)cerr<<"nenacital som vsetko od "<<k<<endl;
         }
         vector<int> oldskore(gs.skore.size());
+        int oldround = gs.round;
         for (unsigned i = 0; i < klienti.size(); i++) {
             oldskore[i]=gs.skore[i];
         }
@@ -307,7 +306,7 @@ int main(int argc, char *argv[]) {
         
         graphstream << gs.round <<" ";
         for (unsigned i = 0; i < klienti.size(); i++) {
-            graphstream << /*klienti[i].meno << " " <<*/ gs.skore[i]-oldskore[i] << " ";
+            graphstream << (gs.skore[i]-oldskore[i])/(gs.round-oldround) << " ";
         }
         graphstream <<endl;
         //TODO ukoncit hru ak zije iba jeden, alebo nie?
@@ -322,7 +321,8 @@ int main(int argc, char *argv[]) {
             }
         }
         for(int i=0; i<policok.size(); i++){
-            if(policok[i]==spolu)iba_jeden=1;
+            if(policok[i]==spolu)
+                iba_jeden=1;            
         }
     }
     
@@ -334,7 +334,7 @@ int main(int argc, char *argv[]) {
     ofstream rankstream((zaznAdr+"/rank").c_str());
     checkOstream(rankstream, zaznAdr+"/rank");
     for (unsigned i = 0; i < klienti.size(); i++) {
-        rankstream << /*klienti[i].meno << " " <<*/ gs.skore[i] << "\n";
+        rankstream << gs.skore[i] << "\n";
     }
     rankstream.close();
     

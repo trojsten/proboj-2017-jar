@@ -7,7 +7,7 @@ while true; do
   echo
 
   cakam=
-  while [ "`grep '^state=displaying$' zaznamy/*.manifest 2>/dev/null | wc -l`" -gt 2 ]; do
+  while [ "`grep '^state=displaying$' zaznamy/*.manifest 2>/dev/null | wc -l`" -gt 10 ]; do
     [ "$cakam" ] || echo -n "cakam kym observer skonci... "
     cakam=t
     sleep 0.5
@@ -69,9 +69,9 @@ state=playing" > $dir.manifest
     rank=`tail $dir/rank`
     echo "hotovo"
     echo "rank=${rank//$'\n'/,}" >> $dir.manifest
+    ./hlavnykomp/gen-graph $dir
     sed -i 's/^state=.*/state=displaying/' $dir.manifest
     # bash hlavnykomp/gen-ranklist > $dir.ranklist
-    ./hlavnykomp/gen-graph $dir
   else
     exitcode=$?
     echo "server spadol s kodom $?"
