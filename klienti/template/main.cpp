@@ -42,6 +42,7 @@ int main() {
 
     while (cin.good()) {
         nacitaj(cin, stav);
+        cerr<<"---"<<endl;
         uloz(cout, zistiTah());
     }
 

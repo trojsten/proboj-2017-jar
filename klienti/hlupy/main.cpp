@@ -40,8 +40,8 @@ vector<Prikaz> zistiTah() {
                 p.pr = POSTAV;
                 p.riadok = i;
                 p.stlpec = j;
-                p.instrukcia = rand()%(stav.zelezo+1);
-                stav.zelezo -= p.instrukcia;
+                p.instrukcia = rand()%(stav.eter+1);
+                stav.eter -= p.instrukcia;
                 instrukcie.push_back(p);
             }
         }
@@ -60,6 +60,7 @@ int main() {
 
   while (cin.good()) {
     nacitaj(cin, stav);
+    cerr<<"---"<<endl;
     uloz(cout, zistiTah());
   }
 
