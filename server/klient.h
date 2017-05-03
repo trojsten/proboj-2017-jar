@@ -1,4 +1,4 @@
-//universal magic
+//universal proboj magic
 #ifndef KLIENT_H
 #define KLIENT_H
 

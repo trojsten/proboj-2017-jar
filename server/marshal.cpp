@@ -1,4 +1,4 @@
-//interface pre komunikáciu s klientami
+//interface pre komunikáciu s klientami (universal proboj magic)
 using namespace std;
 
 #include "marshal.h"

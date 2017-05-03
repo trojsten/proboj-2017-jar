@@ -1,4 +1,4 @@
-//universal magic
+//universal proboj magic
 #include <errno.h>
 #include <cstring>
 #include <unistd.h>

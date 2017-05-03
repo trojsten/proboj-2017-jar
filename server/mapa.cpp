@@ -13,7 +13,7 @@ bool je_policko(int vyska, int sirka, int riadok, int stlpec){
 
 
 masked_game_state::masked_game_state(game_state gs, int klient) {
-    zelezo = gs.zelezo[klient];
+    eter = gs.eter[klient];
     kolo = gs.round;
     sirka = gs.width;
     vyska = gs.height;
@@ -60,7 +60,7 @@ masked_game_state::masked_game_state(game_state gs, int klient) {
 
 game_state::game_state(int num_players, mapa gm) {
     if(num_players>gm.maxplayers) chyba("Toľko hráčov sa na túto mapu nezmestí je tu %d miest",gm.maxplayers);
-    zelezo.resize(num_players,0);
+    eter.resize(num_players,0);
     skore.resize(num_players,0);
     round = 0;
     width = gm.width;

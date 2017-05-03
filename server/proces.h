@@ -1,4 +1,4 @@
-//universal magic
+//universal proboj magic
 #ifndef PROCES_H
 #define PROCES_H
 

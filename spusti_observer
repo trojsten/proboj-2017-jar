@@ -1,4 +1,9 @@
 #!/bin/bash 
-cd Observer
-java -jar ./dist/Proboj.jar ../$1
+cd observer
+#  xdg-open ../$1.png
+v=$(head -2 ../$1/observation |tail -1 |grep -o '^[0-9]*')
+s=$(head -2 ../$1/observation |tail -1 |grep -o '^[0-9]* [0-9]*'|grep -o '[0-9]*$')
+m=$(( v > s ? v : s ))
+java -jar ./JavaFXApp.jar ../$1 --minimap=false --frameTime=100 --frameTimeStep=1.2 --size=$((2000/$m))
+#./observer ../$1/observation; xdg-open ../$1.png;
 cd ..

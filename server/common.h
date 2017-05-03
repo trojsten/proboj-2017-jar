@@ -15,7 +15,7 @@ enum smer {
 };
 
 enum prikaz {
-    POSUN, POSTAV, KONIEC
+    POSUN, POSTAV
 };
 
 //VODA a LAB_SPAWN sú len pre interné potreby, klient ich nevidí 
@@ -32,7 +32,7 @@ struct Prikaz {
 
 struct stvorec {
     int majitel = -1;
-    int sila_robota;
+    int sila_robota = 0;
 };
 
 struct mapa {
@@ -42,7 +42,7 @@ struct mapa {
     mapa(){}
     
     mapa(int width, int height);
-    
+    //interné funkcie
     bool load (string filename);
     void zamaskuj(bool voda);
 };
@@ -51,7 +51,7 @@ struct mapa {
 struct game_state {
     int round;
     int width, height;
-    vector<int> zelezo;
+    vector<int> eter;
     vector<int> skore;
     vector<vector<stvorec> > map;
 
@@ -62,7 +62,7 @@ struct game_state {
 struct masked_game_state {
     int kolo;
     int vyska, sirka;
-    int zelezo;
+    int eter;
     vector<vector<stvorec> > mapa;
     masked_game_state(){}
     masked_game_state(game_state gs, int klient);
@@ -145,7 +145,7 @@ reflection(game_state)
     member(round)
     member(height)
     member(width)
-    member(zelezo)
+    member(eter)
     member(skore)
     member(map)
 end()
@@ -154,7 +154,7 @@ reflection(masked_game_state)
     member(kolo)
     member(vyska)
     member(sirka)
-    member(zelezo)
+    member(eter)
     member(mapa)
 end()
 #endif

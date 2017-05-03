@@ -186,7 +186,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
                 cerr<<cmd.klient_id<<" je chudák, chce postavit robota slabsieho ako 1"<<endl;
                 continue;
             }
-            if(cmd.sila> new_gs.zelezo[cmd.klient_id]){
+            if(cmd.sila> new_gs.eter[cmd.klient_id]){
                 cerr<<cmd.klient_id<<" je chudák, chce postavit robota drahsieho ako si moze dovolit"<<endl;
                 continue;
             }
@@ -195,7 +195,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
                 continue;
             }
             map[cmd.riadok][cmd.stlpec].bol_tu.sila = cmd.sila;
-            new_gs.zelezo[cmd.klient_id]-=cmd.sila;
+            new_gs.eter[cmd.klient_id]-=cmd.sila;
         }
     }
     
@@ -231,10 +231,10 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
         }
     }
     
-    //pocitaj obsadene policka a generuj zelezo
-    vector<int> policok(gs.zelezo.size(),0);
-    vector<int> labov(gs.zelezo.size(),0);
-    vector<int> miest(gs.zelezo.size(),0);
+    //pocitaj obsadene policka a generuj éter
+    vector<int> policok(gs.eter.size(),0);
+    vector<int> labov(gs.eter.size(),0);
+    vector<int> miest(gs.eter.size(),0);
     int policok_spolu=0;
     for(int i=0; i<gs.height; i++){
         for(int j=0; j<gs.width; j++){
@@ -248,11 +248,11 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
              }
          }
      }
-     for(int i=0; i<new_gs.zelezo.size(); i++){
+     for(int i=0; i<new_gs.eter.size(); i++){
          
-         new_gs.zelezo[i]+=labov[i];
-         new_gs.zelezo[i]+=miest[i];
-         new_gs.zelezo[i]+=policok[i]/9;
+         new_gs.eter[i]+=labov[i];
+         new_gs.eter[i]+=miest[i];
+         new_gs.eter[i]+=policok[i]/9;
          if(policok[i]==policok_spolu){
              new_gs.skore[i]+=(labov[i]+miest[i]+(policok[i]/9))*(MAX_POCET_KOL-new_gs.round);
              new_gs.round=MAX_POCET_KOL;

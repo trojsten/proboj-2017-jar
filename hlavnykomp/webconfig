@@ -1,17 +1,11 @@
 # -*- coding: utf8 -*-
 
-DRUZINKY = [
-  ('veduci' , u'veduci', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('bubokrki' , u'BUBOKRKI', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('nulano' , u'nulano', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('nahodicka' , u'nahodicka', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('MAGA' , u'MAGA', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('okno' , u'Windows Vista', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('jedejedemasinka' , u'Jedejedemasinka', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('m' , u'Makroωlnky', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
-  ('paulinia' , u'paulinia', b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
+DRUZINKY = [  
+  
+  
+  
 ]
 
-GIT = 'https://github.com/trojsten/proboj-2016-jesen.git'
+GIT = 'git://192.168.1.170/proboj-2017-jar'
 
 SECRET_KEY = 'blablablablabla'

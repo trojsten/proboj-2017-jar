@@ -1,4 +1,4 @@
-//universal magic
+//universal proboj magic
 #include <cstdio>
 #include <ctime>
 #include <cstring>

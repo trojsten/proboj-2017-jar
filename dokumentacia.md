@@ -20,7 +20,7 @@ V serveri je tiež zopár zdrojákov, čo vás bude zaujímať.
 - v `main.cpp` sú tiež nejaké pravidlá (ako sa ťahá apod.), ale to je menej
   dôležité.
 
-Kľudne si prečítajte aj ostatné zdrojáky, ja (a aj Tomi) sa len potešíme, 
+Kľudne si prečítajte aj ostatné zdrojáky, ja, Tomi a Bui sa len potešíme, 
 ale pri kódení vášho klienta vám asi nepomôžu.
 
 Ako kódiť klienta
@@ -32,17 +32,13 @@ V koreni proboju spustite `make`, čím všetko skompilujete. (Ak váš klient n
 vnútri `klienti`, nastavte v jeho `Makefile` správny `SERVERDIR` a spustite
 `make` aj v ňom.)
 
-Potom spustite `./server/server zaznamy/01 mapy/simple.ppm klienti/vasklient
+Potom spustite `./server/server zaznamy/01 mapy/simple20x20-4.ppm klienti/vasklient
 klienti/vasklient klienti/hlupy` To spustí hru s troma hráčmi (vaším, druhým
 vaším a hlúpym) a uloží záznam do `zaznamy/01`. Ten si môžete pozrieť tak,
 že najprv zmeníte working directory na `observer` (príkaz `cd observer`)
-a potom zadáte príkaz `java -jar ./JavaFXApp.jar ../zaznamy/01`.
+a potom zadáte príkaz `java -jar JavaFXApp.jar ../zaznamy/01`.
 Ak vám java nefunguje, môžete použiť alternatívny observer ktorý nieje taký 
-pekný, a nezobrazuje všetko, ale beží v prehliadači. Spusí sa keď otvoríte 
-`observer/observer.html` a zobrazí záznam `zaznamy/01`. ak používate 
-chrome musíte ho spustiť príkazom `google-chrome --allow-file-access-from-files`
-(ak uz mate spusteny chrome, tak sa to vam moze rozbit, a preto odporucame 
-pouzit `chromium-browser` (da sa nainstalovat cez `apt-get`)).
+pekný, a nezobrazuje všetko, spustíte ho `./observer ../zaznamy/01/observation`. 
 
 Na začiatku hry dostane váš klient informácie o hre --- terén mapy.
 Tiež má pritom viac času, aby sa mohol inicializovať --- server chvíľu počká, 
@@ -66,8 +62,8 @@ Hra sa volá Mad Scientists.
 
 Na mape sú labáky, mestá, skaly a voľné políčka.
 Na začiatku hry vlastníte jeden labák, v ktorom môžete vyrábať robotov. Sila 
-robora závisí od toho koľko železa na jeho výrobu použijete --- čím viac tým 
-silnejší. Železo získavate za keždý obsadený labák, mesto a za každých 9 políčok.
+robora závisí od toho koľko éteru na jeho výrobu použijete --- čím viac tým 
+silnejší. Éter získavate za keždý obsadený labák, mesto a za každých 9 políčok.
 Políčo vlastní ten, koho robot na ňom bol ako posledný. Na každom políčku môže 
 byť len jeden robot.
 
@@ -75,32 +71,32 @@ Vaším cielom je ovládnuť svet. Problém je, že nie ste jediní kto sa o to 
 Na mape sú labáky ostatných hráčov, ktorí tiež stavajú robotov. Kaď sa dvaja 
 roboti stretnú, silnejší vyhráva a slabší zomiera.
 
-Finálne skóre je množstvo železa získané za celú hru.
+Finálne skóre je množstvo éteru získané za celú hru.
 
 Ako sa ťahá
 -----------
 
-V každom kole dostanete pohlad na mapu, tak ako ju vidieť z vášho územia.
+V každom kole dostanete pohľad na mapu, tak ako ju vidieť z vášho územia.
 To znamená celé vaše územie, a dve políčka okolo. O každom políčku ktoré vidíte,
 viete kto ho vlastní, a aký silný robot tam stojí. Na ostatných políčkach je 
 majiteľ `-1` a robot so silou `0`.
 
 Váš ťah je postupnosť príkazov pre jednotlivích robotov, a pre labáky.
 Každému robotovi môžete (nemusíte) povedať smer ktorým sa má pohnúť a každému 
-labáku sil robota ktorého má postaviť. Ak robot alebo labák nedostane príkaz, 
+labáku silu robota ktorého má postaviť. Ak robot alebo labák nedostane príkaz, 
 nič nerobí.
 
 Template klienta je v `C++`, ak chcete použiť iný jazyk, tu budú technické 
-podrobnosti:
+podrobnosti (ak bude mať niekto záujem):
 
 Pravidlá hry
 ------------
 
 V každom kole sa dejú jednotlivé udalosti v tomto poradí:
-zomrú roboti ktorí išli proti múru
-pobijú sa roboti ktorí išli proti sebe (silnejší prejde, slabší zomrie)
-postavia sa roboti v labákoch (ak je tam miesto)
-pobijú sa roboti ktorí sú na jednom políčku
+zomrú roboti ktorí išli proti múru,
+pobijú sa roboti ktorí išli proti sebe (silnejší prejde, slabší zomrie),
+postavia sa roboti v labákoch (ak je tam miesto),
+pobijú sa roboti ktorí sú na jednom políčku (ak je viac rovnako silných, vyberie sa náhodne).
 
 Pravidlá sú veľmi jednoduché, ako bolo z časti popísané vyššie. Pre
 konkrétne informácie odporúčam pýtať sa, alebo nahliadnuť do update.cpp
@@ -110,3 +106,4 @@ Mapy
 ----
 
 Každá mapa má v názve rozmeri a počet hráčov ktorí sa na ňu zmestia.
+Každá mapa je ohraničená skalami (observer niektoré skali zobrazuje ako vodu, pre vás v tom nieje rozdiel)

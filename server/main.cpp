@@ -18,7 +18,7 @@ using namespace std;
 #include "marshal.h"
 
 const int MAX_CITAJ = 500000;
-const int ROUND_TIME = 10000;
+const int ROUND_TIME = 1000;
 
 vector<Klient> klienti;
 
@@ -259,9 +259,6 @@ int main(int argc, char *argv[]) {
                         }
                         prikaz.sila = sila;
                         
-                    }
-                    else if (cmd == KONIEC){
-                        break;
                     }
                     else {
                         cerr << "Nesprávny vstup " << k << ": nesprávny príkaz '" << cmd << "'" << endl;

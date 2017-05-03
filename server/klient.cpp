@@ -1,4 +1,4 @@
-//universal magic
+//universal proboj magic
 #include <string>
 using namespace std;
 
