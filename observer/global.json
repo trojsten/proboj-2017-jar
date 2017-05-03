@@ -15,5 +15,5 @@
   "maxConsoleMessages": 5000,
   "maxMessageLength": 20000,
   "minimap": false,
-  "size": 20
+  "size": "autosize"
 }
