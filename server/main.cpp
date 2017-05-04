@@ -18,7 +18,7 @@ using namespace std;
 #include "marshal.h"
 
 const int MAX_CITAJ = 5000000;
-const int ROUND_TIME = 500;
+const int ROUND_TIME = 1000;
 
 vector<Klient> klienti;
 

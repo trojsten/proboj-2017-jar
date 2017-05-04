@@ -190,7 +190,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
                 cerr<<cmd.klient_id<<" je chudák, chce postavit robota drahsieho ako si moze dovolit"<<endl;
                 continue;
             }
-            if(map[cmd.riadok][cmd.stlpec].bol_tu.sila>0){
+            if(map[cmd.riadok][cmd.stlpec].bol_tu.sila>0 && map[cmd.riadok][cmd.stlpec].bol_tu.sm==TU){
                 cerr<<cmd.klient_id<<" je chudák, chce postavit robota v labaku ktorý nieje prazdny"<<endl;
                 continue;
             }
