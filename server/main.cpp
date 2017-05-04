@@ -17,8 +17,8 @@ using namespace std;
 #include "mapa.h"
 #include "marshal.h"
 
-const int MAX_CITAJ = 500000;
-const int ROUND_TIME = 1000;
+const int MAX_CITAJ = 5000000;
+const int ROUND_TIME = 500;
 
 vector<Klient> klienti;
 
@@ -239,6 +239,7 @@ int main(int argc, char *argv[]) {
                             prikaz.sm = DOLE;
                         else {
                             cerr << "Nesprávny príkaz " << k << ": nesprávny smer '" << dir << "'" << endl;
+                            continue;
                         }
                     } 
                     else if (cmd == POSTAV) {
@@ -262,6 +263,7 @@ int main(int argc, char *argv[]) {
                     }
                     else {
                         cerr << "Nesprávny vstup " << k << ": nesprávny príkaz '" << cmd << "'" << endl;
+                        continue;
                     }
                     commands.push_back(prikaz);
                 }

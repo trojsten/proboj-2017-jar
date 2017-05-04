@@ -68,7 +68,7 @@ struct masked_game_state {
     masked_game_state(game_state gs, int klient);
 };
 
-//dalej su interné štruktúri, asi vám nepomôžu, ale kľudne si ich pozrite
+//dalej su interné štruktúry, asi vám nepomôžu, ale kľudne si ich pozrite
 struct instruction {
     int klient_id;
     prikaz pr;

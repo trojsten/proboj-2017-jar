@@ -28,7 +28,7 @@ Ako kódiť klienta
 
 Skopírujte obsah `klienti/template` do iného adresára a niečo v ňom nakóďte.
 
-V koreni proboju spustite `make`, čím všetko skompilujete. (Ak váš klient nie je
+V koreni proboja spustite `make`, čím všetko skompilujete. (Ak váš klient nie je
 vnútri `klienti`, nastavte v jeho `Makefile` správny `SERVERDIR` a spustite
 `make` aj v ňom.)
 
@@ -37,7 +37,7 @@ klienti/vasklient klienti/hlupy` To spustí hru s troma hráčmi (vaším, druh�
 vaším a hlúpym) a uloží záznam do `zaznamy/01`. Ten si môžete pozrieť tak,
 že najprv zmeníte working directory na `observer` (príkaz `cd observer`)
 a potom zadáte príkaz `java -jar observer.jar ../zaznamy/01`.
-Ak vám java nefunguje, môžete použiť alternatívny observer ktorý nieje taký 
+Ak vám java nefunguje, môžete použiť alternatívny observer ktorý nie je taký 
 pekný, a nezobrazuje všetko, spustíte ho `./observer ../zaznamy/01/observation`. 
 
 Na začiatku hry dostane váš klient informácie o hre --- terén mapy.
@@ -64,11 +64,11 @@ Na mape sú labáky, mestá, skaly a voľné políčka.
 Na začiatku hry vlastníte jeden labák, v ktorom môžete vyrábať robotov. Sila 
 robora závisí od toho koľko éteru na jeho výrobu použijete --- čím viac tým 
 silnejší. Éter získavate za keždý obsadený labák, mesto a za každých 9 políčok.
-Políčo vlastní ten, koho robot na ňom bol ako posledný. Na každom políčku môže 
+Políčko vlastní ten, koho robot na ňom bol ako posledný. Na každom políčku môže 
 byť len jeden robot.
 
-Vaším cielom je ovládnuť svet. Problém je, že nie ste jediní kto sa o to snaží.
-Na mape sú labáky ostatných hráčov, ktorí tiež stavajú robotov. Kaď sa dvaja 
+Vaším cielom je ovládnuť svet. Problém je, že nie ste jediní, kto sa o to snaží.
+Na mape sú labáky ostatných hráčov, ktorí tiež stavajú robotov. Keď sa dvaja 
 roboti stretnú, silnejší vyhráva a slabší zomiera.
 
 Finálne skóre je množstvo éteru získané za celú hru.
@@ -77,11 +77,11 @@ Ako sa ťahá
 -----------
 
 V každom kole dostanete pohľad na mapu, tak ako ju vidieť z vášho územia.
-To znamená celé vaše územie, a dve políčka okolo. O každom políčku ktoré vidíte,
+To znamená celé vaše územie a dve políčka okolo. O každom políčku ktoré vidíte,
 viete kto ho vlastní, a aký silný robot tam stojí. Na ostatných políčkach je 
 majiteľ `-1` a robot so silou `0`.
 
-Váš ťah je postupnosť príkazov pre jednotlivích robotov, a pre labáky.
+Váš ťah je postupnosť príkazov pre jednotlivých robotov, a pre labáky.
 Každému robotovi môžete (nemusíte) povedať smer ktorým sa má pohnúť a každému 
 labáku silu robota ktorého má postaviť. Ak robot alebo labák nedostane príkaz, 
 nič nerobí.
@@ -100,10 +100,10 @@ pobijú sa roboti ktorí sú na jednom políčku (ak je viac rovnako silných, v
 
 Pravidlá sú veľmi jednoduché, ako bolo z časti popísané vyššie. Pre
 konkrétne informácie odporúčam pýtať sa, alebo nahliadnuť do update.cpp
-a poloviť v komentároch --- haha komentáre tam niesu.
+a poloviť v komentároch --- haha komentáre tam nie sú.
 
 Mapy
 ----
 
-Každá mapa má v názve rozmeri a počet hráčov ktorí sa na ňu zmestia.
-Každá mapa je ohraničená skalami (observer niektoré skali zobrazuje ako vodu, pre vás v tom nieje rozdiel)
+Každá mapa má v názve rozmery a počet hráčov ktorí sa na ňu zmestia.
+Každá mapa je ohraničená skalami (observer niektoré skaly zobrazuje ako vodu, pre vás v tom nie je rozdiel)
