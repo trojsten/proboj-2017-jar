@@ -53,30 +53,30 @@ chybove hlasky pri kompilovani.
 Tak to treba opravit. Konkretne pokyny bohuzial neexistuju,
 takze si asi trochu poplacete, ale co vas nezabije, to vas posilni.
 
-<!--## O vyhodnoteni
+## O vyhodnoteni
 
-Najprv bol "group stage", kde boli 2 skupiny. Na kazdej mape sa odohral
-1 zapas, v ktorom boli vsetky timy skupiny. Z kazdej skupiny postupili
-do finale 2 najlepsie umiestnene timy. Finale sa vyhodnotilo podobne
--- na kazdej mape sa odohral 1 zapas, v ktorom bojovali vsetky timy,
-co sa dostali do finale.
+Vyhodnotenie prebehlo dvoma spôsobmy. Štandardne (každý proti každému) a turnaj 1v1 (double elimination).
+Turnaj sa hral na mapách kebak, logo a isle, každý duel na všetkých troch.
+![](proboj-2017-jar-turnaj.png)
 
-Zapasy na vyhodnoteni si viete pozriet nasledovne:
+Zápasi z finále turnaja sú v priečinku záznamy.
+Výsledky štandardného finále (10% priebežné body + vyhodnotenie):
 
-*   Skopirujete priecinok zapasy1, zapasy2 alebo zapasy3 do priecinku
-zaznamy. (`zapasy1` je prva skupina, `zapasy2` je druha a `zapasy3`
-je finale)
 
-*   Spustite z korena proboja bash-skript `./pustaj-observer2`.
-
-Ak si chcete spravit vlastne vyhodnotenie, tak sa vam zidu skripty
-`testall`, `testall1`, ... nachadzajuce sa v koreni proboja.
-Konkretnejsie pokyny zatial neexistuju.
+1.  Nulano	    6259482 + 14368090 = 20 627 572
+2.  Bujosakrmi	9127110 + 7588554 = 16 715 664
+3.  brutfors	2855053 + 12285622 = 15 140 675
+4.  paulinia	4604502 + 8292474 = 12 896 976
+5.  toolate	    36146 + 5522954 = 5 559 100
+6.  misko	    763672 + 1526383 = 2 290 055
+7.  nemozne	    77566 + 871553 = 949 119
 
 ## Nejake obrazky na zaver
 
-![](proboj3a.png)
+![](proboja.png)
 
-![](proboj3b.png)
+![](probojb.png)
 
-![](proboj3c.png)-->
+![](probojc.png)
+
+![](probojd.png)

@@ -54,16 +54,16 @@
   <p><a href="{{ url_for('mapy_lister') }}">Mapy</a></p>
   <p><a href="{{ url_for('records') }}">Archív odohratých hier</a></p>
   
-  Najnovsiu verziu proboja si viete stiahnut na 10.0.0.10:8000. (Posledna zmena bola 9:40 rano.)
+  Najnovsiu verziu proboja si viete stiahnut <a href="tar"><strong>tu</strong></a>. (Posledna zmena bola 21:40 večer.)
   
   {% if config['GIT'] %}
     <p>Alebo mozte pouzit aj git:</p>
     <p><code>git clone {{ config['GIT'] }}</code> &larr; stiahne proboj</p>
-    <p><code>git pull</code> &larr; aktualizuje na najnovšiu verziu (spúšťať v adresári "proboj-2016-jesen")</p>
+    <p><code>git pull</code> &larr; aktualizuje na najnovšiu verziu (spúšťať v adresári "proboj-2017-jar")</p>
   {% endif %}
   
-  <p><b>Vedeli ste, ze:</b> ak v debugovacom vypise napisete "TAH 7" a na dalsom riadku "text",
-  tak vam observer zobrazi tento debugovaci vypis v tahu 7? Toto sa vam urcite zide pri debugovani.</p>
+  <p><b>Vedeli ste, ze:</b> ak v debugovacom vypise napisete každé kolo "---" a na dalsom riadku "text",
+  tak vam observer zobrazi tento debugovaci text v danom ťahu? Toto sa vam urcite zide pri debugovani.</p>
   
   <p><b>Tip 2:</b> v observerovi viete stlacit ctrl+ a ctrl-, a tym zvysovat alebo znizovat rychlost prehravania.</p>
 

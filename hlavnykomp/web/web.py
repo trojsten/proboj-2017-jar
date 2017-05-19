@@ -66,7 +66,7 @@ def get_ranklist():
         myranks = manifest['rank'].strip(',').split(',')
         for i, build in enumerate(builds):
             client = build.partition('/')[0]
-            ranks[client] = (ranks[client] + int(myranks[i])) #* 0.9
+            ranks[client] = (ranks[client] + int(myranks[i]))# * 0.97
     return reversed(sorted(((round(rank, 2), id) for id, rank in ranks.items())))
 
 
@@ -240,6 +240,12 @@ def graphs_download(id):
     #if id not in records: abort(404)
     #if records[id]['state'] != 'displayed': abort(403)
     path = '../../zaznamy/'+id+'.png'
+    if not os.path.isfile(path): abort(404)
+    return send_file(path, as_attachment=True)
+
+@app.route("/tar")
+def tar_download():
+    path = '../../proboj.tar.gz'
     if not os.path.isfile(path): abort(404)
     return send_file(path, as_attachment=True)
 

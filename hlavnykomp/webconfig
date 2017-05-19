@@ -1,6 +1,15 @@
 # -*- coding: utf8 -*-
 
 DRUZINKY = [  
+  ('jano' , u'toolate', b'9dac05b97418ed0ceb0b8cd1830f5c2daab55d71' ),
+  ('nemozne' , u'nemozne', b'22a07d051fd63d73a84bb5a131fcc8d1df6a8006' ),
+  ('konzulat' , u'konzulat', b'1ffafca1c2c36f1c0a272a97d043f4be52c016da' ),
+  ('bujosakrmi' , u'Bujosakrmi', b'e9fd2e364670de520402b4155282468433b55bec' ),
+  ('brutfors' , u'brutfors', b'd8e782e12b1e0ff4760b215ded2a5146cd2587a6' ),
+  ('misko' , u'misko', b'42530d8579417cd45e70407295c9c833e80f8b30' ),
+  ('korfix' , u'korfix', b'44b83aaf65a258fd9dadd49215ff0442c9165fea' ),
+  ('nulano' , u'Nulano', b'447f4158b1e270cd30902a7e3096095beb5d4844' ),
+  ('paulinia' , u'paulinia', b'f210a0808016ee1a63a63d811450f154b8ac5a2a' ),
   
   
   

@@ -195,6 +195,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
                 continue;
             }
             map[cmd.riadok][cmd.stlpec].bol_tu.sila = cmd.sila;
+	    map[cmd.riadok][cmd.stlpec].bol_tu.sm = TU;
             new_gs.eter[cmd.klient_id]-=cmd.sila;
         }
     }
@@ -253,6 +254,7 @@ game_state update_game_state(mapa gm, game_state gs, vector<instruction> command
          new_gs.eter[i]+=labov[i];
          new_gs.eter[i]+=miest[i];
          new_gs.eter[i]+=policok[i]/9;
+         //if(i>0) new_gs.eter[i]+=policok[i]*9;
          if(policok[i]==policok_spolu){
              new_gs.skore[i]+=(labov[i]+miest[i]+(policok[i]/9))*(MAX_POCET_KOL-new_gs.round);
              new_gs.round=MAX_POCET_KOL;
