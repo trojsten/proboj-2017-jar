@@ -1,0 +1,5 @@
+make SERVERDIR=../../../../server naserveri
+g++ -O2 -MMD -MP -Wall -I../../../../server -std=gnu++11   -c -o main.o main.cpp
+g++ -O2 -MMD -MP -Wall -I../../../../server -std=gnu++11   -c -o server_marshal.o ../../../../server/marshal.cpp
+g++ -O2 -MMD -MP -Wall -I../../../../server -std=gnu++11   -c -o server_common.o ../../../../server/common.cpp
+g++ -O2 -MMD -MP -Wall -I../../../../server -std=gnu++11    main.o server_marshal.o server_common.o  -o hrac
